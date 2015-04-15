@@ -21,6 +21,11 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 alias sshq='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 alias scpq='scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 
+# unset USER/USERNAME to work with keystoneclient (but why?!?!?!)
+unset USER
+unset USERNAME
+
+# Default to QEOS instance
 source ~/qeos.sh
 
 # Choose Openstack instance
