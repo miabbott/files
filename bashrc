@@ -34,7 +34,7 @@ unset USER
 unset USERNAME
 
 # Default to QEOS instance
-source ~/qeos.sh
+#source ~/qeos.sh
 
 # Choose Openstack instance
 alias qeos="source ~/qeos.sh"
@@ -57,6 +57,14 @@ alias nova-clean-images=NovaCleanImages
 # Flush ARP cache
 alias flush-arp="ip -s -s neigh flush all"
 
+# Delete VM from resources.json file
+function NovaDeleteRes()
+{
+    VM=`grep name $1 | cut -d '"' -f4`
+    nova delete $VM
+}
+
+alias nova-delete-res=NovaDeleteRes
 # Use 'sudo' with aliases
 # http://askubuntu.com/a/22043
 alias sudo="sudo "
@@ -80,3 +88,6 @@ function FreeCachedMem()
     sync
 }
 alias free-mem=FreeCachedMem
+
+# setup for rcm_messages
+export KRB5CCNAME=/tmp/krb5cc_miabbott
