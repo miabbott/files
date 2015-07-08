@@ -60,7 +60,12 @@ alias flush-arp="ip -s -s neigh flush all"
 # Delete VM from resources.json file
 function NovaDeleteRes()
 {
-    VM=`grep name $1 | cut -d '"' -f4`
+    if [ $# -eq 0 ]; then
+        RES='resources.json'
+    else
+        RES="$1"
+    fi
+    VM=`grep name $RES | cut -d '"' -f4`
     nova delete $VM
 }
 
