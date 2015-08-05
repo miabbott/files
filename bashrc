@@ -58,6 +58,9 @@ alias nova-clean-images=NovaCleanImages
 alias flush-arp="ip -s -s neigh flush all"
 
 # Delete VM from resources.json file
+# TODO: error checking for names not in OS instance
+# TODO: error checking for floating IPs not in OS instance
+# TODO: handle multiple floating IPs
 function NovaDeleteRes()
 {
     if [ $# -eq 0 ]; then
@@ -66,6 +69,8 @@ function NovaDeleteRes()
         RES="$1"
     fi
     VM=`grep name $RES | cut -d '"' -f4`
+    VMIP=`grep ip $RES | cut -d '"' -f4`
+    nova floating-ip-disassociate $VM $VMIP
     nova delete $VM
 }
 
