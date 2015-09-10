@@ -39,6 +39,7 @@ unset USERNAME
 # Choose Openstack instance
 alias qeos="source ~/qeos.sh"
 alias os1="source ~/os1.sh"
+alias docker-jenkins="source ~/docker-jekins.sh"
 
 # Clean up QEOS floating IP
 function NovaCleanIPs()
@@ -101,3 +102,10 @@ alias free-mem=FreeCachedMem
 
 # setup for rcm_messages
 export KRB5CCNAME=/tmp/krb5cc_miabbott
+
+# nova cleanup stub code
+# nova list | awk 'NR>3 {print $2}' | xargs -i nova show {} | awk '/created/ {print $4}'
+# 1. list all instances
+# 2. print out ids
+# 3. show details
+# 4. print out creation date
