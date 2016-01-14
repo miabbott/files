@@ -26,8 +26,8 @@ PROMPT_COMMAND="$PROMPT_COMMAND; prompt_command"
 # export SYSTEMD_PAGER=
 
 # User specific aliases and functions
-alias sshq='ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
-alias scpq='scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+alias sshq="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+alias scpq="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 # unset USER/USERNAME to work with keystoneclient (but why?!?!?!)
 unset USER
@@ -109,3 +109,20 @@ export KRB5CCNAME=/tmp/krb5cc_miabbott
 # 2. print out ids
 # 3. show details
 # 4. print out creation date
+
+alias vmlist="sudo virsh list --all"
+
+# YAML Lint
+#alias yamllint="ruby -e \"require 'yaml'; YAML.load_file('$1')\""
+
+# Configure polipo proxy
+#export http_proxy=http://localhost:8123
+
+# Alias to start simple tmux session
+function StartTmux()
+{
+    tmux new-session -d -n htop htop
+    tmux new-window
+    tmux -2 attach-session -d
+}
+alias start-tmux=StartTmux
