@@ -126,3 +126,6 @@ function StartTmux()
     tmux -2 attach-session -d
 }
 alias start-tmux=StartTmux
+
+# disable ctrl-s - suspend terminal
+stty -ixon
