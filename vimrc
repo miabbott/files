@@ -14,3 +14,8 @@ set pastetoggle=<F2>
 syntax enable
 set background=dark
 colorscheme solarized
+
+set laststatus=2
+
+" http://www.bestofvim.com/tip/trailing-whitespace/
+match ErrorMsg '\s\+$'

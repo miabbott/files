@@ -39,6 +39,7 @@ unset USERNAME
 # Choose Openstack instance
 alias qeos="source ~/qeos.sh"
 alias os1="source ~/os1.sh"
+alias osp7="source ~/osp7.sh"
 alias docker-jenkins="source ~/docker-jekins.sh"
 
 # Clean up QEOS floating IP
@@ -115,8 +116,20 @@ alias vmlist="sudo virsh list --all"
 # YAML Lint
 #alias yamllint="ruby -e \"require 'yaml'; YAML.load_file('$1')\""
 
-# Configure polipo proxy
-#export http_proxy=http://localhost:8123
+# Turn on/off http proxy
+function HttpProxyOn()
+{
+    export http_proxy=http://localhost:8123
+    export https_proxy=http://localhost:8123
+}
+alias proxyon=HttpProxyOn
+
+function HttpProxyOff()
+{
+    unset http_proxy
+    unset https_proxy
+}
+alias proxyoff=HttpProxyOff
 
 # Alias to start simple tmux session
 function StartTmux()
