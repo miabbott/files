@@ -36,10 +36,11 @@ unset USERNAME
 # Default to QEOS instance
 #source ~/qeos.sh
 
-# Choose Openstack instance
+# Choose Openstack instance/tenant
 alias qeos="source ~/qeos.sh"
 alias os1="source ~/os1.sh"
 alias osp7="source ~/osp7.sh"
+alias osp7-testing="source ~/osp7-testing.sh"
 alias docker-jenkins="source ~/docker-jekins.sh"
 
 # Clean up QEOS floating IP
