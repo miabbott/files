@@ -6,6 +6,7 @@ execute pathogen#infect()
 " Colorscheme
 set background=dark
 colorscheme solarized
+set t_Co=256            " force vim to use 256 colors
 
 " Syntax Processing
 syntax enable
