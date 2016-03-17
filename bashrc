@@ -143,3 +143,16 @@ alias start-tmux=StartTmux
 
 # disable ctrl-s - suspend terminal
 stty -ixon
+
+# Define default LIBVIRT connection
+export LIBVIRT_DEFAULT_URI=qemu:///system
+
+# Putting this here because I don't have an Ansible playbook to setup my workstation
+#$ sudo cat /etc/polkit-1/rules.d/80-libvirt-manage.rules
+#// https://goldmann.pl/blog/2012/12/03/configuring-polkit-in-fedora-18-to-access-virt-manager/
+#polkit.addRule(function(action, subject) {
+#  if (action.id == "org.libvirt.unix.manage" && subject.local && subject.active && subject.isInGroup("wheel")) {
+#      return polkit.Result.YES;
+#  }
+#});
+#

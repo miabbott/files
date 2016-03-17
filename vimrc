@@ -93,3 +93,6 @@ set pastetoggle=<F2>    " disable auto-indent when pasting
 set laststatus=2        " always display statusline
 
 match ErrorMsg '\s\+$'  " highlight trailing whitespace
+
+" .md files are Markdown
+autocmd BufNewFile,BufRead *.md set filetype=markdown
