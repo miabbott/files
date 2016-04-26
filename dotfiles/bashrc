@@ -156,3 +156,14 @@ export LIBVIRT_DEFAULT_URI=qemu:///system
 #  }
 #});
 #
+
+# get the weather
+function GetWeather()
+{
+    if [ -z "$1" ]; then
+        curl http://wttr.in
+    else
+        curl http://wttr.in/$1
+    fi
+}
+alias weather=GetWeather
