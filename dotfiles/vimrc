@@ -15,12 +15,12 @@ syntax enable
 set tabstop=4           " number of spaces per tab visually displayed
 set softtabstop=4       " number of spaces per tab inserted/removed
 set expandtab           " tabs are spaces
+filetype plugin indent on      " load plugin/indent files for filetypes
 
 " UI Config
 set number              " show line numbers
 set showcmd             " show current command (INSERT/REPLACE/etc)
 set cursorline          " highlight current line
-filetype indent on      " turn on filetype detection and lang. specific identation
 set lazyredraw          " redraw only when neeeded
 set showmatch           " highlight matching [{()}]
 
@@ -76,6 +76,7 @@ set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set writebackup
 
 " Errata
+
 set pastetoggle=<F2>    " disable auto-indent when pasting
 
 set laststatus=2        " always display statusline
