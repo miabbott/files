@@ -1,0 +1,15 @@
+[user]
+	name = Micah Abbott
+	email = miabbott@redhat.com
+[push]
+	default = simple
+[core]
+	editor = vim
+[log]
+	abbrevCommit = true
+[alias]
+  	co = checkout
+  	ci = commit
+  	st = status
+  	br = branch
+  	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
