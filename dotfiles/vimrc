@@ -85,3 +85,6 @@ match ErrorMsg '\s\+$'  " highlight trailing whitespace
 
 " .md files are Markdown
 autocmd BufNewFile,BufRead *.md set filetype=markdown
+
+" limit gitcommit messages to 70 characters
+autocmd Filetype gitcommit setlocal textwidth=70
