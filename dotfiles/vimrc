@@ -23,6 +23,7 @@ set showcmd             " show current command (INSERT/REPLACE/etc)
 set cursorline          " highlight current line
 set lazyredraw          " redraw only when neeeded
 set showmatch           " highlight matching [{()}]
+set list                " highlight whitespace
 
 " Searching
 set incsearch           " search as characters are entered
@@ -88,3 +89,13 @@ autocmd BufNewFile,BufRead *.md set filetype=markdown
 
 " limit gitcommit messages to 70 characters
 autocmd Filetype gitcommit setlocal textwidth=70
+
+" Hat tip to @jlebon for these three tweaks
+" Characters to use when :set list is turned on to display hidden chars
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+
+" Show/hide hidden characters
+nnoremap <F3> :set list!<CR>:set list?<CR>
+
+" Keep cursor within 3 lines of top or bottom line when scrolling
+set scrolloff=3
