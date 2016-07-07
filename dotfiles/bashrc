@@ -184,9 +184,13 @@ function RemoveVm()
     if [ -z "$1" ]; then
         printf "Please provide a VM name\n"
     else
-        QCOW=$(virsh dumpxml $1 | grep -F .qcow2 | cut -d "'" -f2)
-        virsh undefine $1
+        STATE=$(virsh dominfo $1 | grep State | awk '{print $2}')
+        if [ "$STATE" = "running" ]; then
+            virsh destroy $1
+        fi
+        QCOW=$(virsh dumpxml $1 | grep -m 1 -F .qcow2 | cut -d "'" -f2)
         sudo rm $QCOW
+        virsh undefine $1
     fi
 }
 alias remove-vm=RemoveVm
