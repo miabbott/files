@@ -14,10 +14,10 @@ HISTFILESIZE=1048576
 
 LAST_HISTORY_WRITE=$SECONDS
 function prompt_command {
-    if [ $(($SECONDS - $LAST_HISTORY_WRITE)) -gt 60 ]; then
-        history -a && history -c && history -r
-        LAST_HISTORY_WRITE=$SECONDS
-    fi
+	if [ $(($SECONDS - $LAST_HISTORY_WRITE)) -gt 60 ]; then
+		history -a && history -c && history -r
+		LAST_HISTORY_WRITE=$SECONDS
+	fi
 }
 
 PROMPT_COMMAND="$PROMPT_COMMAND; prompt_command"
@@ -46,14 +46,14 @@ alias docker-jenkins="source ~/docker-jekins.sh"
 # Clean up QEOS floating IP
 function NovaCleanIPs()
 {
-    nova floating-ip-list | awk '{print $2,$6}' | grep '-' | awk '{print $1}' | xargs -i nova floating-ip-delete {}
+	nova floating-ip-list | awk '{print $2,$6}' | grep '-' | awk '{print $1}' | xargs -i nova floating-ip-delete {}
 }
 alias nova-clean-ips=NovaCleanIPs
 
 # Clean up QEOS images
 function NovaCleanImages()
 {
-    nova list | grep $1 | awk '{print $2}' | xargs -i nova delete {}
+	nova list | grep $1 | awk '{print $2}' | xargs -i nova delete {}
 }
 alias nova-clean-images=NovaCleanImages
 
@@ -66,15 +66,15 @@ alias flush-arp="ip -s -s neigh flush all"
 # TODO: handle multiple floating IPs
 function NovaDeleteRes()
 {
-    if [ $# -eq 0 ]; then
-        RES='resources.json'
-    else
-        RES="$1"
-    fi
-    VM=`grep name $RES | cut -d '"' -f4`
-    VMIP=`grep ip $RES | cut -d '"' -f4`
-    nova floating-ip-disassociate $VM $VMIP
-    nova delete $VM
+	if [ $# -eq 0 ]; then
+		RES='resources.json'
+	else
+		RES="$1"
+	fi
+	VM=`grep name $RES | cut -d '"' -f4`
+	VMIP=`grep ip $RES | cut -d '"' -f4`
+	nova floating-ip-disassociate $VM $VMIP
+	nova delete $VM
 }
 
 alias nova-delete-res=NovaDeleteRes
@@ -85,8 +85,8 @@ alias sudo="sudo "
 # Retrieve the IP address for a VM
 function GetVmIp()
 {
-    MAC=`sudo virsh dumpxml $1 | grep 'mac address' | awk -F\' '{print $2}'`
-    ip neigh | grep $MAC | awk '{print $1}'
+	MAC=`sudo virsh dumpxml $1 | grep 'mac address' | awk -F\' '{print $2}'`
+	ip neigh | grep $MAC | awk '{print $1}'
 }
 alias get-vm-ip=GetVmIp
 
@@ -95,10 +95,10 @@ alias get-vm-ip=GetVmIp
 # https://web.archive.org/web/*/http://www.yourownlinux.com/2013/10/how-to-free-up-release-unused-cached-memory-in-linux.html
 function FreeCachedMem()
 {
-    echo 1 > /proc/sys/vm/drop_caches
-    echo 2 > /proc/sys/vm/drop_caches
-    echo 3 > /proc/sys/vm/drop_caches
-    sync
+	echo 1 > /proc/sys/vm/drop_caches
+	echo 2 > /proc/sys/vm/drop_caches
+	echo 3 > /proc/sys/vm/drop_caches
+	sync
 }
 alias free-mem=FreeCachedMem
 
@@ -120,23 +120,24 @@ alias vmlist="sudo virsh list --all"
 # Turn on/off http proxy
 function HttpProxyOn()
 {
-    export http_proxy=http://localhost:8123
-    export https_proxy=http://localhost:8123
+	export http_proxy=http://localhost:8123
+	export https_proxy=http://localhost:8123
 }
 alias proxyon=HttpProxyOn
 
 function HttpProxyOff()
 {
-    unset http_proxy
-    unset https_proxy
+	unset http_proxy
+	unset https_proxy
 }
 alias proxyoff=HttpProxyOff
 
 # Alias to start simple tmux session
 function StartTmux()
 {
-    tmux new-session -d -n htop htop
+	tmux new-session -d -n htop htop
 	tmux split-window
+	tmux -2 attach-session -d
 }
 alias start-tmux=StartTmux
 
@@ -151,7 +152,7 @@ export LIBVIRT_DEFAULT_URI=qemu:///system
 #// https://goldmann.pl/blog/2012/12/03/configuring-polkit-in-fedora-18-to-access-virt-manager/
 #polkit.addRule(function(action, subject) {
 #  if (action.id == "org.libvirt.unix.manage" && subject.local && subject.active && subject.isInGroup("wheel")) {
-#      return polkit.Result.YES;
+#	   return polkit.Result.YES;
 #  }
 #});
 #
@@ -159,11 +160,11 @@ export LIBVIRT_DEFAULT_URI=qemu:///system
 # get the weather
 function GetWeather()
 {
-    if [ -z "$1" ]; then
-        curl http://wttr.in
-    else
-        curl http://wttr.in/$1
-    fi
+	if [ -z "$1" ]; then
+		curl http://wttr.in
+	else
+		curl http://wttr.in/$1
+	fi
 }
 alias weather=GetWeather
 
@@ -180,16 +181,16 @@ export PS1="[\[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$g
 # undefine a VM and remove the qcow2
 function RemoveVm()
 {
-    if [ -z "$1" ]; then
-        printf "Please provide a VM name\n"
-    else
-        STATE=$(virsh dominfo $1 | grep State | awk '{print $2}')
-        if [ "$STATE" = "running" ]; then
-            virsh destroy $1
-        fi
-        QCOW=$(virsh dumpxml $1 | grep -m 1 -F .qcow2 | cut -d "'" -f2)
-        sudo rm $QCOW
-        virsh undefine $1
-    fi
+	if [ -z "$1" ]; then
+		printf "Please provide a VM name\n"
+	else
+		STATE=$(virsh dominfo $1 | grep State | awk '{print $2}')
+		if [ "$STATE" = "running" ]; then
+			virsh destroy $1
+		fi
+		QCOW=$(virsh dumpxml $1 | grep -m 1 -F .qcow2 | cut -d "'" -f2)
+		sudo rm $QCOW
+		virsh undefine $1
+	fi
 }
 alias remove-vm=RemoveVm
