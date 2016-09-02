@@ -13,6 +13,8 @@ syntax enable
 
 " Spaces & Tabs
 set tabstop=4           " number of spaces per tab visually displayed
+set softtabstop=4       " match to tabstop
+set shiftwidth=4        " set cols for reindent ops (>>)
 set noexpandtab         " tabs are tabs
 filetype plugin indent on      " load plugin/indent files for filetypes
 
