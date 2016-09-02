@@ -13,8 +13,7 @@ syntax enable
 
 " Spaces & Tabs
 set tabstop=4           " number of spaces per tab visually displayed
-set softtabstop=4       " number of spaces per tab inserted/removed
-set expandtab           " tabs are spaces
+set noexpandtab         " tabs are tabs
 filetype plugin indent on      " load plugin/indent files for filetypes
 
 " UI Config

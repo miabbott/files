@@ -136,8 +136,7 @@ alias proxyoff=HttpProxyOff
 function StartTmux()
 {
     tmux new-session -d -n htop htop
-    tmux new-window
-    tmux -2 attach-session -d
+	tmux split-window
 }
 alias start-tmux=StartTmux
 
