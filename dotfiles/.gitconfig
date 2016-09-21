@@ -8,10 +8,11 @@
 [log]
 	abbrevCommit = true
 [alias]
-  	co = checkout
-  	ci = commit
-  	st = status
-    br = branch
-    lg = "log --color --stat --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-  	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	lg = "log --color --stat --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
 	alias = config --get-regexp ^alias\\.
+	pr = "!f() { git fetch $1 refs/pull/$2/head:pr/$1/$2 && git checkout pr/$1/$2; } ; f"
