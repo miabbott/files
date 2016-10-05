@@ -28,13 +28,14 @@ PROMPT_COMMAND="$PROMPT_COMMAND; prompt_command"
 # User specific aliases and functions
 alias sshq="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 alias scpq="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+alias sshk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 # unset USER/USERNAME to work with keystoneclient (but why?!?!?!)
 unset USER
 unset USERNAME
 
-# Default to QEOS instance
-#source ~/qeos.sh
+# Default to OSP7 Testing tenant
+source ~/osp7-testing.sh
 
 # Choose Openstack instance/tenant
 alias qeos="source ~/qeos.sh"
