@@ -100,3 +100,6 @@ nnoremap <F3> :set list!<CR>:set list?<CR>
 
 " Keep cursor within 3 lines of top or bottom line when scrolling
 set scrolloff=3
+
+"Remove all trailing whitespace by pressing F5
+nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
