@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+    config.vm.define "cahc", autostart: false do |cahc|
+        cahc.vm.provider :libvirt do |domain|
+            domain.memory = 2048
+        end
+        cahc.vm.box = "centos/atomic-host/continuous"
+        cahc.vm.box_url = "https://ci.centos.org/artifacts/sig-atomic/centos-continuous/images/cloud/latest/images/centos-atomic-host-7-vagrant-libvirt.box"
+        cahc.vm.hostname = "cahc-dev"
+        if ENV['PLAYBOOK_FILE']
+            cahc.vm.provision "ansible" do |ansible|
+                ansible.playbook = ENV['PLAYBOOK_FILE']
+            end
+        end
+    end
+
+    config.vm.define "centos" do |centos|
+        centos.vm.box = "centos/atomic-host"
+        centos.vm.hostname = "centosah-dev"
+        if ENV['PLAYBOOK_FILE']
+            centos.vm.provision "ansible" do |ansible|
+                ansible.playbook = ENV['PLAYBOOK_FILE']
+            end
+        end
+    end
+end
