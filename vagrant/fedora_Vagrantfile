@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+	config.vm.provider "libvirt" do |domain|
+		domain.memory = "2048"
+	end
+
+	config.vm.define 'f25-ah' do |f25ah|
+		f25ah.vm.box = "fedora/25-atomic-host"
+		f25ah.vm.synced_folder "./", "/vagrant", disabled: 'true'
+		if ENV['PLAYBOOK_FILE']
+			f25ah.vm.provision "ansible" do |ansible|
+				ansible.playbook = ENV['PLAYBOOK_FILE']
+			end
+		end
+	end
+
+	config.vm.define 'f25-cloud', autostart: false  do |f25cloud|
+		f25cloud.vm.box = "fedora/25-cloud-base"
+		if ENV['PLAYBOOK_FILE']
+			f25cloud.vm.provision "ansible" do |ansible|
+				ansible.playbook = ENV['PLAYBOOK_FILE']
+			end
+		end
+	end
+
+	config.vm.define 'f24-ah', autostart: false do |f24ah|
+		f24ah.vm.box = "fedora/24-atomic-host"
+		f24ah.vm.synced_folder "./", "/vagrant", disabled: 'true'
+		if ENV['PLAYBOOK_FILE']
+			f24ah.vm.provision "ansible" do |ansible|
+				ansible.playbook = ENV['PLAYBOOK_FILE']
+			end
+		end
+	end
+
+	config.vm.define 'f24-cloud', autostart: false  do |f24cloud|
+		f24cloud.vm.box = "fedora/24-cloud-base"
+		if ENV['PLAYBOOK_FILE']
+			f24cloud.vm.provision "ansible" do |ansible|
+				ansible.playbook = ENV['PLAYBOOK_FILE']
+			end
+		end
+	end
+end
