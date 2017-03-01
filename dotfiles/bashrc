@@ -198,3 +198,6 @@ alias remove-vm=RemoveVm
 
 # get ip from vagrant box
 alias vagrantip="vagrant ssh -c \"ip address show eth0 | grep 'inet ' | sed -e 's/^.*inet //' -e 's/\/.*$//'\""
+
+eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
+export SSH_AUTH_SOCK

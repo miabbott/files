@@ -16,3 +16,6 @@
 	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
 	alias = config --get-regexp ^alias\\.
 	pr = "!f() { git fetch $1 refs/pull/$2/head:pr/$1/$2 && git checkout pr/$1/$2; } ; f"
+[sendemail]
+	from = Micah Abbott <miabbott@redhat.com>
+	smtpserver = smtp.corp.redhat.com
