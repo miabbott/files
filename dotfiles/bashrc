@@ -38,11 +38,11 @@ unset USERNAME
 source ~/osp7-testing.sh
 
 # Choose Openstack instance/tenant
-alias qeos="source ~/qeos.sh"
-alias os1="source ~/os1.sh"
 alias osp7="source ~/osp7.sh"
 alias osp7-testing="source ~/osp7-testing.sh"
 alias docker-jenkins="source ~/docker-jekins.sh"
+alias rhos="source ~/rhos.sh"
+alias rhos-testing="source ~/rhos-testing.sh"
 
 # Clean up QEOS floating IP
 function NovaCleanIPs()
@@ -137,7 +137,6 @@ alias proxyoff=HttpProxyOff
 function StartTmux()
 {
 	tmux new-session -d -n htop htop
-	tmux split-window
 	tmux -2 attach-session -d
 }
 alias start-tmux=StartTmux
@@ -199,5 +198,10 @@ alias remove-vm=RemoveVm
 # get ip from vagrant box
 alias vagrantip="vagrant ssh -c \"ip address show eth0 | grep 'inet ' | sed -e 's/^.*inet //' -e 's/\/.*$//'\""
 
-eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
-export SSH_AUTH_SOCK
+# add jlebon files to PATH
+export PATH="$PATH:/home/miabbott/workspaces/jlebon/files/bin"
+
+# aliases for frequently used dirs
+alias aht="pushd ~/workspaces/projectatomic/atomic-host-tests/"
+alias acj="pushd ~/workspaces/atomic-ci-jobs/"
+
