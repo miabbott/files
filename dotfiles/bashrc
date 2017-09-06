@@ -37,12 +37,22 @@ unset USERNAME
 # Default to OSP7 Testing tenant
 source ~/osp7-testing.sh
 
+# Unset all the OpenStack vars
+# https://stackoverflow.com/a/5976494/6257168
+function UnsetOpenStack()
+{
+	for i in $(echo "${!OS_*}"); do
+		unset $i
+	done
+}
+alias unset-openstack=UnsetOpenStack
+
 # Choose Openstack instance/tenant
-alias osp7="source ~/osp7.sh"
-alias osp7-testing="source ~/osp7-testing.sh"
-alias docker-jenkins="source ~/docker-jekins.sh"
-alias rhos="source ~/rhos.sh"
-alias rhos-testing="source ~/rhos-testing.sh"
+alias osp7="UnsetOpenStack; source ~/osp7.sh"
+alias osp7-testing="UnsetOpenStack; source ~/osp7-testing.sh"
+alias docker-jenkins="UnsetOpenStack; source ~/docker-jekins.sh"
+alias rhos="UnsetOpenStack; source ~/rhos.sh"
+alias rhos-testing="UnsetOpenStack; source ~/rhos-testing.sh"
 
 # Clean up QEOS floating IP
 function NovaCleanIPs()
