@@ -17,6 +17,20 @@ Vagrant.configure(2) do |config|
 		end
 	end
 
+	config.vm.define 'f26-ah-testing', autostart: false do |f26ahtesting|
+		f26ahtesting.vm.box = "fedora/26-atomic-host"
+		f26ahtesting.vm.hostname = "fedora26ah-testing-dev"
+		f26ahtesting.vm.provision "shell",
+			inline: "rpm-ostree rebase fedora-atomic/26/x86_64/testing/docker-host"
+		f26ahtesting.vm.provision :reload
+		f26ahtesting.vm.synced_folder "./", "/vagrant", disabled: 'true'
+		if ENV['PLAYBOOK_FILE']
+			f26ahtesting.vm.provision "ansible" do |ansible|
+				ansible.playbook = ENV['PLAYBOOK_FILE']
+			end
+		end
+	end
+
 	config.vm.define 'f26-cloud', autostart: false  do |f26cloud|
 		f26cloud.vm.box = "fedora/26-cloud-base"
 		f26cloud.vm.hostname = "fedora26cloud-dev"
