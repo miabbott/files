@@ -34,8 +34,8 @@ alias sshk="ssh -o PreferredAuthentications=keyboard-interactive,password -o Pub
 unset USER
 unset USERNAME
 
-# Default to OSP7 Testing tenant
-source ~/osp7-testing.sh
+# Default to CI-RHOS Testing tenant
+source ~/rhos-testing.sh
 
 # Unset all the OpenStack vars
 # https://stackoverflow.com/a/5976494/6257168
