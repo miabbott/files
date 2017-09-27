@@ -182,6 +182,7 @@ alias weather=GetWeather
 # https://github.com/jimeh/git-aware-prompt
 export GITAWAREPROMPT=~/.bash/git-aware-prompt
 source "${GITAWAREPROMPT}/main.sh"
+
 # colorize prompt, drop user@hostname portion because this is for my local account
 export PS1="[\[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 # additional examples in case I change my mind
@@ -214,4 +215,14 @@ export PATH="$PATH:/home/miabbott/workspaces/jlebon/files/bin"
 # aliases for frequently used dirs
 alias aht="pushd ~/workspaces/projectatomic/atomic-host-tests/"
 alias acj="pushd ~/workspaces/atomic-ci-jobs/"
+
+# Git tab completion
+# https://github.com/git/git/blob/master/contrib/completion/git-completion.bash
+source ~/git-completion.bash
+
+# Finding SSH_AUTH_SOCK
+# http://blog.joncairns.com/2013/12/understanding-ssh-agent-and-ssh-add/
+# https://github.com/wwalker/ssh-find-agent
+source ~/ssh-find-agent.sh
+set_ssh_agent_socket
 
