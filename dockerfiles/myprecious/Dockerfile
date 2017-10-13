@@ -4,6 +4,7 @@ ENV container=docker
 RUN dnf -y install flatpak-builder \
                    fuse \
                    git \
+		   git-review \
                    iputils \
                    man \
                    python2-virtualenv \
