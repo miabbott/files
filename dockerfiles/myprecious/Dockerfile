@@ -1,15 +1,19 @@
 FROM registry.fedoraproject.org/fedora:26
 LABEL maintainer="Micah Abbott <miabbott@redhat.com>"
 ENV container=docker
-RUN dnf -y install flatpak-builder \
+RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
+    dnf -y reinstall '*' && \
+    dnf -y install flatpak-builder \
                    fuse \
                    git \
-		   git-review \
+                   git-review \
                    iputils \
                    man \
                    python2-virtualenv \
                    python3-virtualenv \
                    redhat-rpm-config \
+                   rsync \
+                   sshpass \
                    sudo \
                    vim && \
     dnf clean all
