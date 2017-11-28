@@ -1,10 +1,11 @@
-FROM registry.fedoraproject.org/fedora:26
+FROM registry.fedoraproject.org/fedora:27
 LABEL maintainer="Micah Abbott <miabbott@redhat.com>"
 ENV container=docker
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
     dnf -y reinstall '*' && \
     dnf -y install flatpak-builder \
                    fuse \
+		   gcc \
                    git \
                    git-review \
                    iputils \
