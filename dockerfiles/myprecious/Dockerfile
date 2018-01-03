@@ -5,7 +5,7 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
     dnf -y reinstall '*' && \
     dnf -y install flatpak-builder \
                    fuse \
-		   gcc \
+                   gcc \
                    git \
                    git-review \
                    iputils \
