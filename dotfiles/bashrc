@@ -186,11 +186,22 @@ source "${GITAWAREPROMPT}/main.sh"
 # colorize prompt, drop user@hostname portion because this is for my local account
 export PS1="[\[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 
+
 # if we think we are in a container, let's show that
-export incontainer="${container:-none}"
-if [[ "$incontainer" == "docker" ]]; then
+# requires use of `ENV container docker` in your containers
+#export incontainer="${container:-none}"
+
+# of course jlebon has the better solution
+# https://github.com/jlebon/files/blob/master/dotfiles/.bashrc#L222
+__in_dockerenv=no
+if [ -f /.dockerenv ]; then
+    __in_dockerenv=yes
+fi
+
+if [[ "$__in_dockerenv" == yes ]]; then
     export PS1="[\[$txtred\](container) \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 fi
+
 # additional examples in case I change my mind
 #export PS1="[\u@\h \W \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 #export PS1="[\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
