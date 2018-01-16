@@ -1,9 +1,12 @@
 FROM registry.fedoraproject.org/fedora:27
 LABEL maintainer="Micah Abbott <miabbott@redhat.com>"
-ENV container=docker
-RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
+ENV container docker
+RUN curl -L -o /etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo && \
+    curl -o /etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo && \
+    sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
     dnf -y reinstall '*' && \
-    dnf -y install flatpak-builder \
+    dnf -y install beaker-client \
+                   beaker-redhat \
                    fuse \
                    gcc \
                    git \
@@ -12,6 +15,7 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
                    man \
                    python2-virtualenv \
                    python3-virtualenv \
+                   qa-tools-workstation \
                    redhat-rpm-config \
                    rsync \
                    sshpass \
