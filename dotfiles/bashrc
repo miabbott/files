@@ -244,3 +244,5 @@ source ~/ssh-find-agent.sh
 set_ssh_agent_socket
 
 alias htop="sudo docker run -it --rm --pid=host miabbott/htop"
+
+export GOPATH=~/workspace/go
