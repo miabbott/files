@@ -11,6 +11,7 @@ RUN curl -L -o /etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/q
                    gcc \
                    git \
                    git-review \
+                   golang \
                    iputils \
                    man \
                    python2-virtualenv \
