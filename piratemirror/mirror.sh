@@ -1,8 +1,8 @@
 #!/bin/bash
 set -xeou pipefail
 
-prod=${1:-/host/repo}
-stage=${2:-/host/staging}
+prod=${PROD:-/host/repo}
+stage=${STAGE:-/host/staging}
 ref="fedora/27/x86_64/workstation"
 
 if [[ ! -d "$prod" ]] || [[ ! -d "$stage" ]]; then
@@ -19,5 +19,5 @@ if [[ "$rhead" != "$lhead" ]]; then
     ostree --repo=$stage pull --mirror --depth=1 onerepo:$ref
     ostree --repo=$stage prune --keep-younger-than="7 days ago" $ref
     ostree --repo=$stage summary -u
-    /root/rsync-repos --src $stage --dest $prod
+    /usr/local/bin/rsync-repos --src $stage --dest $prod
 fi
