@@ -194,7 +194,7 @@ export PS1="[\[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$g
 # of course jlebon has the better solution
 # https://github.com/jlebon/files/blob/master/dotfiles/.bashrc#L222
 __in_dockerenv=no
-if [ -f /.dockerenv ]; then
+if [ -f /.dockerenv ] || [ -f /run/.containerenv ]; then
     __in_dockerenv=yes
 fi
 
@@ -243,7 +243,13 @@ source ~/git-completion.bash
 source ~/ssh-find-agent.sh
 set_ssh_agent_socket
 
-alias htop="sudo docker run -it --rm --pid=host miabbott/htop"
+alias htop="sudo podman run -it --rm --pid=host miabbott/htop"
 
-export GOPATH=~/workspace/go
+export GOPATH=~/workspaces/go
 export PATH="$PATH:$GOPATH/bin"
+
+# living on the edge!
+alias docker="/usr/bin/podman"
+
+# handy for doing local ostree tests
+alias ost="ostree --repo=repo"
