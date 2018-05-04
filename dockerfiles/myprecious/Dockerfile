@@ -7,6 +7,7 @@ RUN curl -L -o /etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/q
     dnf -y reinstall '*' && \
     dnf -y install beaker-client \
                    beaker-redhat \
+                   conserver-client \
                    fuse \
                    gcc \
                    git \
