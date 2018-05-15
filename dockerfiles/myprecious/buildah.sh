@@ -23,6 +23,7 @@ dnf -y install --installroot $mp --releasever 27 \
                    beaker-client \
                    beaker-redhat \
                    conserver-client \
+                   cyrus-sasl-gssapi \
                    fuse \
                    gcc \
                    git \
@@ -30,6 +31,8 @@ dnf -y install --installroot $mp --releasever 27 \
                    golang \
                    iputils \
                    man \
+                   python-qpid-messaging \
+                   python-saslwrapper \
                    python2-virtualenv \
                    python3-virtualenv \
                    qa-tools-workstation \
