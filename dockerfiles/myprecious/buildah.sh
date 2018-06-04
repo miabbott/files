@@ -20,6 +20,7 @@ dnf -y reinstall --disablerepo=beaker-client --disablerepo=qa-tools --installroo
 
 # install the rest
 dnf -y install --installroot $mp --releasever 27 \
+                   awscli \
                    beaker-client \
                    beaker-redhat \
                    conserver-client \

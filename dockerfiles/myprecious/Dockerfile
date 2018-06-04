@@ -5,7 +5,8 @@ RUN curl -L -o /etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/q
     curl -o /etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo && \
     sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf && \
     dnf -y reinstall '*' && \
-    dnf -y install beaker-client \
+    dnf -y install awscli \
+                   beaker-client \
                    beaker-redhat \
                    conserver-client \
                    fuse \
