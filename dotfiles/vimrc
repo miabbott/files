@@ -104,3 +104,10 @@ set scrolloff=3
 
 "Remove all trailing whitespace by pressing F5
 nnoremap <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
+
+"Ansible template
+if has("autocmd")
+    augroup templates
+        autocmd BufNewFile *.yml 0r ~/.vim/templates/ansible.yml
+    augroup END
+endif
