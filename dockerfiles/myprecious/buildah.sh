@@ -31,6 +31,7 @@ dnf -y install --installroot $mp --releasever 27 \
                    git-review \
                    golang \
                    iputils \
+                   jq \
                    man \
                    python-qpid-messaging \
                    python-saslwrapper \
