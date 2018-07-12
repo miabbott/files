@@ -243,7 +243,7 @@ source ~/git-completion.bash
 source ~/ssh-find-agent.sh
 set_ssh_agent_socket
 
-alias htop="sudo podman run -it --rm --pid=host miabbott/htop"
+alias htop="sudo podman run -it --rm --pid=host localhost/miabbott/htop"
 
 export GOPATH=~/workspaces/go
 export PATH="$PATH:$GOPATH/bin"
@@ -253,3 +253,9 @@ alias docker="/usr/bin/podman"
 
 # handy for doing local ostree tests
 alias ost="ostree --repo=repo"
+
+# Get latest RHCOS AMI
+function rhcos()
+{
+   echo "--aws-type t2.small --aws-region us-east-1 --aws-ami $(curl -s http://aos-ostree.rhev-ci-vms.eng.rdu2.redhat.com/rhcos/images/cloud/latest/aws-us-east-1.json | jq -r .HVM)"
+}
