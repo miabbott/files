@@ -21,6 +21,7 @@ RUN curl -L -o /etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/q
                    python3-virtualenv \
                    qa-tools-workstation \
                    redhat-rpm-config \
+                   rpm-ostree \
                    rsync \
                    sshpass \
                    sudo \

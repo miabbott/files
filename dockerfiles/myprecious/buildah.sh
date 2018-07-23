@@ -39,6 +39,7 @@ dnf -y install --installroot $mp --releasever 27 \
                    python3-virtualenv \
                    qa-tools-workstation \
                    redhat-rpm-config \
+                   rpm-ostree \
                    rsync \
                    sshpass \
                    sudo \
