@@ -7,6 +7,8 @@ if [ $# -eq 0 ]; then
 fi
 releasever=$1; shift
 
+registry="docker-registry-default.cloud.registry.upshift.redhat.com"
+
 # create base container
 ctr=$(buildah from registry.fedoraproject.org/fedora:$releasever)
 
@@ -59,6 +61,7 @@ dnf_cmd install \
                    libselinux-devel \
                    jq \
                    man \
+                   podman \
                    python-qpid-messaging \
                    python-saslwrapper \
                    python2-virtualenv \
@@ -67,6 +70,7 @@ dnf_cmd install \
                    redhat-rpm-config \
                    rpm-ostree \
                    rsync \
+                   skopeo \
                    sshpass \
                    sudo \
                    tmux \
@@ -86,8 +90,10 @@ chroot $mp bash -c "/usr/sbin/useradd --groups wheel --uid 1000 miabbott"
 # config the user
 buildah config --user miabbott $ctr
 
-# commit the image
+# commit, tag, push the image
 buildah commit $ctr miabbott/myprecious:$releasever
+podman tag localhost/miabbott/myprecious:$releasever $registry/miabbott/myprecious:$releasever
+podman push $registry/miabbott/myprecious:$releasever
 
 # unmount and remove the container
 buildah unmount $ctr
