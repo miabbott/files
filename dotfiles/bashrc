@@ -259,3 +259,6 @@ function rhcos()
 {
    echo "--aws-type t2.small --aws-region us-east-1 --aws-ami $(curl -s http://aos-ostree.rhev-ci-vms.eng.rdu2.redhat.com/rhcos/images/cloud/latest/aws-us-east-1.json | jq -r .HVM)"
 }
+
+# coreos-assembler
+alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv quay.io/cgwalters/coreos-assembler"
