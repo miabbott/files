@@ -1,6 +1,12 @@
 #!/bin/bash
 set -xeou pipefail
 
+trap_cleanup() {
+  ctr=$1; shift
+  buildah umount $ctr
+  buildah rm $ctr
+}
+
 if [ $# -eq 0 ]; then
   echo "Must supply value for releasever"
   exit 1
@@ -8,6 +14,8 @@ fi
 releasever=$1; shift
 
 registry="docker-registry-default.cloud.registry.upshift.redhat.com"
+
+trap "trap_cleanup" ERR
 
 # create base container
 ctr=$(buildah from registry.fedoraproject.org/fedora:$releasever)
@@ -25,6 +33,7 @@ buildah config --label maintainer="Micah Abbott <miabbott@redhat.com>" $ctr
 # setup yum repos
 curl -L -o $mp/etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo
 curl -L -o $mp/etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo
+
 
 # reinstall all pkgs with docs
 sed -i '/tsflags=nodocs/d' $mp/etc/dnf/dnf.conf
@@ -61,6 +70,7 @@ dnf_cmd install \
                    libselinux-devel \
                    jq \
                    man \
+                   origin-clients \
                    podman \
                    python-qpid-messaging \
                    python-saslwrapper \
@@ -70,12 +80,18 @@ dnf_cmd install \
                    redhat-rpm-config \
                    rpm-ostree \
                    rsync \
+                   ShellCheck \
                    skopeo \
                    sshpass \
                    sudo \
                    tmux \
                    vim
 
+
+# clone c-a repo and install deps
+cp /etc/resolv.conf $mp/etc/resolv.conf
+chroot $mp git clone https://github.com/coreos/coreos-assembler
+chroot $mp bash -c "(cd coreos-assembler && ./build.sh configure_yum_repos && ./build.sh install_rpms)"
 
 # clean up
 dnf_cmd clean all
@@ -90,11 +106,13 @@ chroot $mp bash -c "/usr/sbin/useradd --groups wheel --uid 1000 miabbott"
 # config the user
 buildah config --user miabbott $ctr
 
-# commit, tag, push the image
+# commit the image
 buildah commit $ctr miabbott/myprecious:$releasever
-podman tag localhost/miabbott/myprecious:$releasever $registry/miabbott/myprecious:$releasever
-podman push $registry/miabbott/myprecious:$releasever
 
 # unmount and remove the container
 buildah unmount $ctr
 buildah rm $ctr
+
+# tag and push image
+podman tag localhost/miabbott/myprecious:$releasever $registry/miabbott/myprecious:$releasever
+podman push $registry/miabbott/myprecious:$releasever
