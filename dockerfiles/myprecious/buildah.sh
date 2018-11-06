@@ -3,8 +3,8 @@ set -xeou pipefail
 
 trap_cleanup() {
   ctr=$1; shift
-  buildah umount $ctr
-  buildah rm $ctr
+  buildah umount "$ctr"
+  buildah rm "$ctr"
 }
 
 if [ $# -eq 0 ]; then
@@ -15,29 +15,30 @@ releasever=$1; shift
 
 registry="docker-registry-default.cloud.registry.upshift.redhat.com"
 
-trap "trap_cleanup" ERR
 
 # create base container
-ctr=$(buildah from registry.fedoraproject.org/fedora:$releasever)
+ctr=$(buildah from registry.fedoraproject.org/fedora:"$releasever")
+
+trap 'trap_cleanup $ctr' ERR
 
 # mount container filesystem
-mp=$(buildah mount $ctr)
+mp=$(buildah mount "$ctr")
 
 dnf_cmd() {
-  dnf -y --installroot $mp --releasever $releasever $@
+  dnf -y --installroot "$mp" --releasever "$releasever" "$@"
 }
 
 # set the maintainer label
-buildah config --label maintainer="Micah Abbott <miabbott@redhat.com>" $ctr
+buildah config --label maintainer="Micah Abbott <miabbott@redhat.com>" "$ctr"
 
 # setup yum repos
-curl -L -o $mp/etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo
-curl -L -o $mp/etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo
+curl -L -o "$mp"/etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo
+curl -L -o "$mp"/etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo
 
 
 # reinstall all pkgs with docs
-sed -i '/tsflags=nodocs/d' $mp/etc/dnf/dnf.conf
-dnf -y --installroot $mp --releasever $releasever --disablerepo=beaker-client --disablerepo=qa-tools reinstall '*'
+sed -i '/tsflags=nodocs/d' "$mp"/etc/dnf/dnf.conf
+dnf -y --installroot "$mp" --releasever "$releasever" --disablerepo=beaker-client --disablerepo=qa-tools reinstall '*'
 
 # install tools needed for building ostree/rpm-ostree stack
 dnf_cmd install @buildsys-build dnf-plugins-core
@@ -89,30 +90,29 @@ dnf_cmd install \
 
 
 # clone c-a repo and install deps
-cp /etc/resolv.conf $mp/etc/resolv.conf
-chroot $mp git clone https://github.com/coreos/coreos-assembler
-chroot $mp bash -c "(cd coreos-assembler && ./build.sh configure_yum_repos && ./build.sh install_rpms)"
+cp /etc/resolv.conf "$mp"/etc/resolv.conf
+chroot "$mp" git clone https://github.com/coreos/coreos-assembler
+chroot "$mp" bash -c "(cd coreos-assembler && ./build.sh configure_yum_repos && ./build.sh install_rpms)"
 
 # clean up
 dnf_cmd clean all
 
 # setup sudoers
-echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> $mp/etc/sudoers
-echo "Defaults secure_path = /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> $mp/etc/sudoers
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> "$mp"/etc/sudoers
+echo "Defaults secure_path = /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >> "$mp"/etc/sudoers
 
 # add my username/uid
-chroot $mp bash -c "/usr/sbin/useradd --groups wheel --uid 1000 miabbott"
+chroot "$mp" bash -c "/usr/sbin/useradd --groups wheel --uid 1000 miabbott"
 
 # config the user
-buildah config --user miabbott $ctr
+buildah config --user miabbott "$ctr"
 
 # commit the image
-buildah commit $ctr miabbott/myprecious:$releasever
+buildah commit "$ctr" miabbott/myprecious:"$releasever"
 
 # unmount and remove the container
-buildah unmount $ctr
-buildah rm $ctr
+trap_cleanup "$ctr"
 
 # tag and push image
-podman tag localhost/miabbott/myprecious:$releasever $registry/miabbott/myprecious:$releasever
-podman push $registry/miabbott/myprecious:$releasever
+podman tag localhost/miabbott/myprecious:"$releasever" "$registry"/miabbott/myprecious:"$releasever"
+podman push "$registry"/miabbott/myprecious:"$releasever"
