@@ -184,7 +184,7 @@ export GITAWAREPROMPT=~/.bash/git-aware-prompt
 source "${GITAWAREPROMPT}/main.sh"
 
 # colorize prompt, drop user@hostname portion because this is for my local account
-export PS1="[\[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
+export PS1="[\[\033[01;32m\]\u@\h \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 
 
 # if we think we are in a container, let's show that
@@ -199,7 +199,7 @@ if [ -f /.dockerenv ] || [ -f /run/.containerenv ]; then
 fi
 
 if [[ "$__in_dockerenv" == yes ]]; then
-    export PS1="[\[$txtred\](container) \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
+    export PS1="[\[\033[01;32m\]\u@\h \[$txtred\](container) \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 fi
 
 # additional examples in case I change my mind
@@ -257,8 +257,14 @@ alias ost="ostree --repo=repo"
 # Get latest RHCOS AMI
 function rhcos()
 {
-   echo "--aws-type t2.small --aws-region us-east-1 --aws-ami $(curl -s http://aos-ostree.rhev-ci-vms.eng.rdu2.redhat.com/rhcos/images/cloud/latest/aws-us-east-1.json | jq -r .HVM)"
+   local latest_build
+   latest_build=$(curl -L -s https://releases-redhat-coreos.cloud.paas.upshift.redhat.com/storage/releases/maipo/builds.json | podman run -i docker.io/miabbott/aht-tools jq -r .builds[0])
+   local us_east_1
+   us_east_1=$(curl -L -s https://releases-redhat-coreos.cloud.paas.upshift.redhat.com/storage/releases/maipo/$latest_build/meta.json | podman run -i docker.io/miabbott/aht-tools jq -r .amis[0].hvm)
+   echo "${us_east_1}"
 }
 
 # coreos-assembler
 alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv quay.io/cgwalters/coreos-assembler"
+alias local-ca="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
+alias dev-ca="podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
