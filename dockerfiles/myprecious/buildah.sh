@@ -35,6 +35,10 @@ buildah config --label maintainer="Micah Abbott <miabbott@redhat.com>" "$ctr"
 curl -L -o "$mp"/etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo
 curl -L -o "$mp"/etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo
 
+# coreutils-single conflicts with coreutils so have to swap?
+if [ $releasever == "29" ]; then
+  dnf_cmd swap coreutils-single coreutils-full
+fi
 
 # reinstall all pkgs with docs
 sed -i '/tsflags=nodocs/d' "$mp"/etc/dnf/dnf.conf
