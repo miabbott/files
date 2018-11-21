@@ -97,6 +97,13 @@ dnf_cmd install \
 cp /etc/resolv.conf "$mp"/etc/resolv.conf
 chroot "$mp" git clone https://github.com/coreos/coreos-assembler
 chroot "$mp" bash -c "(cd coreos-assembler && ./build.sh configure_yum_repos && ./build.sh install_rpms)"
+chroot "$mp" rm -rf coreos-assembler
+
+# install bat
+chroot "$mp" git clone https://github.com/sharkdp/bat
+chroot "$mp" bash -c "(cd bat && cargo install --path /usr/local bat && cargo clean)"
+chroot "$mp" (mv /usr/bin/cat /usr/bin/cat.old && ln -s /usr/local/bin/bat /usr/bin/cat)
+chroot "$mp" rm -rf bat
 
 # clean up
 dnf_cmd clean all
