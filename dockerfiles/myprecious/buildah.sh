@@ -1,10 +1,14 @@
 #!/bin/bash
 set -xeou pipefail
 
-trap_cleanup() {
+cleanup() {
   ctr=$1; shift
   buildah umount "$ctr"
   buildah rm "$ctr"
+}
+
+dnf_cmd() {
+  dnf -y --installroot "$mp" --releasever "$releasever" "$@"
 }
 
 if [ $# -eq 0 ]; then
@@ -15,18 +19,16 @@ releasever=$1; shift
 
 registry="docker-registry-default.cloud.registry.upshift.redhat.com"
 
+token="$(cat /home/miabbott/.secrets/upshift-registry-sa.secret)"
+
 
 # create base container
 ctr=$(buildah from registry.fedoraproject.org/fedora:"$releasever")
 
-trap 'trap_cleanup $ctr' ERR
+trap 'cleanup $ctr' ERR
 
 # mount container filesystem
 mp=$(buildah mount "$ctr")
-
-dnf_cmd() {
-  dnf -y --installroot "$mp" --releasever "$releasever" "$@"
-}
 
 # set the maintainer label
 buildah config --label maintainer="Micah Abbott <miabbott@redhat.com>" "$ctr"
@@ -36,7 +38,7 @@ curl -L -o "$mp"/etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.
 curl -L -o "$mp"/etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo
 
 # coreutils-single conflicts with coreutils so have to swap?
-if [ $releasever == "29" ]; then
+if [ "$releasever" == "29" ]; then
   dnf_cmd swap coreutils-single coreutils-full
 fi
 
@@ -62,17 +64,20 @@ dnf_cmd install \
                    fuse \
                    gcc \
                    git \
+                   git-evtag \
                    git-review \
                    glib2-devel \
                    glibc-static \
                    golang \
                    golang-github-cpuguy83-go-md2man \
+                   gpg \
                    gpgme-devel \
                    iputils \
                    libassuan-devel \
                    libgpg-error-devel \
                    libseccomp-devel \
                    libselinux-devel \
+                   libvirt-devel \
                    jq \
                    man \
                    origin-clients \
@@ -100,10 +105,14 @@ chroot "$mp" bash -c "(cd coreos-assembler && ./build.sh configure_yum_repos && 
 chroot "$mp" rm -rf coreos-assembler
 
 # install bat
+mount -t proc /proc "$mp"/proc
+mount -t sysfs /sys "$mp"/sys
 chroot "$mp" git clone https://github.com/sharkdp/bat
-chroot "$mp" bash -c "(cd bat && cargo install --root /usr/local bat && cargo clean)"
-chroot "$mp" (mv /usr/bin/cat /usr/bin/cat.old && ln -s /usr/local/bin/bat /usr/bin/cat)
-chroot "$mp" rm -rf bat
+chroot "$mp" bash -c "(cd bat && /usr/bin/cargo install --root /usr/local bat && /usr/bin/cargo clean)"
+chroot "$mp" bash -c "(mv /usr/bin/cat /usr/bin/cat.old && ln -s /usr/local/bin/bat /usr/bin/cat)"
+chroot "$mp" bash -c "rm -rf bat"
+umount "$mp/proc"
+umount "$mp/sys"
 
 # clean up
 dnf_cmd clean all
@@ -122,8 +131,9 @@ buildah config --user miabbott "$ctr"
 buildah commit "$ctr" miabbott/myprecious:"$releasever"
 
 # unmount and remove the container
-trap_cleanup "$ctr"
+cleanup "$ctr"
 
 # tag and push image
+podman login -u unused -p "$token" "$registry"
 podman tag localhost/miabbott/myprecious:"$releasever" "$registry"/miabbott/myprecious:"$releasever"
 podman push "$registry"/miabbott/myprecious:"$releasever"
