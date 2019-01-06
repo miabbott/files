@@ -268,3 +268,6 @@ function rhcos()
 alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv quay.io/cgwalters/coreos-assembler"
 alias local-ca="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 alias dev-ca="podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
+
+# OpenShift intaller
+export AWS_PROFILE=openshift-dev
