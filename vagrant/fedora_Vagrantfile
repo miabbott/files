@@ -7,59 +7,25 @@ Vagrant.configure(2) do |config|
 		domain.random :model => 'random'
 	end
 
-	config.vm.define 'f27-cloud', autostart: false  do |f27cloud|
-		f27cloud.vm.box = "fedora/27-cloud-base"
-		f27cloud.vm.hostname = "fedora27cloud-dev"
+	config.vm.define 'f28-cloud', autostart: false  do |f28cloud|
+		f28cloud.vm.box = "fedora/28-cloud-base"
+		f28cloud.vm.hostname = "fedora28cloud-dev"
 		if ENV['PLAYBOOK_FILE']
-			f27cloud.vm.provision "ansible" do |ansible|
+			f28cloud.vm.provision "ansible" do |ansible|
 				ansible.playbook = ENV['PLAYBOOK_FILE']
 			end
 		end
 	end
 
-	config.vm.define 'f27-ah', autostart: false do |f27ah|
-		f27ah.vm.box = "fedora/27-atomic-host"
-		f27ah.vm.hostname = "fedora27ah-dev"
-		f27ah.vm.synced_folder "./", "/vagrant", disabled: 'true'
+	config.vm.define 'f28-ah', autostart: false do |f28ah|
+		f28ah.vm.box = "fedora/28-atomic-host"
+		f28ah.vm.hostname = "fedora28ah-dev"
+		f28ah.vm.synced_folder "./", "/vagrant", disabled: 'true'
 		if ENV['PLAYBOOK_FILE']
-			f27ah.vm.provision "ansible" do |ansible|
+			f28ah.vm.provision "ansible" do |ansible|
 				ansible.playbook = ENV['PLAYBOOK_FILE']
 			end
 		end
 	end
 
-	config.vm.define 'f26-ah', autostart: false do |f26ah|
-		f26ah.vm.box = "fedora/26-atomic-host"
-		f26ah.vm.hostname = "fedora26ah-dev"
-		f26ah.vm.synced_folder "./", "/vagrant", disabled: 'true'
-		if ENV['PLAYBOOK_FILE']
-			f26ah.vm.provision "ansible" do |ansible|
-				ansible.playbook = ENV['PLAYBOOK_FILE']
-			end
-		end
-	end
-
-	config.vm.define 'f26-ah-testing', autostart: false do |f26ahtesting|
-		f26ahtesting.vm.box = "fedora/26-atomic-host"
-		f26ahtesting.vm.hostname = "fedora26ah-testing-dev"
-		f26ahtesting.vm.provision "shell",
-			inline: "rpm-ostree rebase fedora-atomic/26/x86_64/testing/docker-host"
-		f26ahtesting.vm.provision :reload
-		f26ahtesting.vm.synced_folder "./", "/vagrant", disabled: 'true'
-		if ENV['PLAYBOOK_FILE']
-			f26ahtesting.vm.provision "ansible" do |ansible|
-				ansible.playbook = ENV['PLAYBOOK_FILE']
-			end
-		end
-	end
-
-	config.vm.define 'f26-cloud', autostart: false  do |f26cloud|
-		f26cloud.vm.box = "fedora/26-cloud-base"
-		f26cloud.vm.hostname = "fedora26cloud-dev"
-		if ENV['PLAYBOOK_FILE']
-			f26cloud.vm.provision "ansible" do |ansible|
-				ansible.playbook = ENV['PLAYBOOK_FILE']
-			end
-		end
-	end
 end
