@@ -55,6 +55,7 @@ dnf_cmd install \
                    awscli \
                    beaker-client \
                    beaker-redhat \
+                   bind-utils \
                    btrfs-progs-devel\
                    conmon \
                    conserver-client \
@@ -63,6 +64,7 @@ dnf_cmd install \
                    device-mapper-devel \
                    fuse \
                    gcc \
+                   gdb \
                    git \
                    git-evtag \
                    git-review \
@@ -78,6 +80,7 @@ dnf_cmd install \
                    libseccomp-devel \
                    libselinux-devel \
                    libvirt-devel \
+                   lz4 \
                    jq \
                    man \
                    origin-clients \
