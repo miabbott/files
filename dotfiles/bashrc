@@ -151,6 +151,10 @@ alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=hos
 alias local-ca="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 alias dev-ca="podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 
+# provide alias for jq when not in container
+if [[ "$__in_dockerenv" != yes ]]; then
+    alias jq="podman run --rm -i quay.io/miabbott/jq"
+fi
 
 ### ERRATA ###
 
