@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Fedora Silverblue Day 1</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="css/reveal.css">
+	  <link rel="stylesheet" href="css/theme/league.css" id="theme">
+	  <link rel="stylesheet" href="lib/css/zenburn.css">
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+        <div class="slides">
+	          <section>
+	              <section>
+	                  <p>
+	                      <a href="https://silverblue.fedoraproject.org"><img src="silverblue-logo.svg" style="border: 0; border-style: none; box-shadow: none;"/></a>
+	                  </p>
+	                  <p>DevConf.cz 2019</p>
+	                  <p style="font-size: smaller;">Micah Abbott</p>
+                      <p style="font-size: smaller;">Principal Quality Engineer - Red Hat</p>
+	              </section>
+	          </section>
+
+            <section>
+                <section>
+                    <h2>What is Fedora Silverblue?</h2>
+                    <p>Fedora Silverblue is...</p>
+                    <p class="fragment">Fedora</p>
+                    <p class="fragment">RPMs (delivered via ostree)</p>
+                    <p class="fragment">Containers</p>
+                    <p class="fragment">Flatpaks</p>
+                    <p class="fragment">an immutable host</p>
+                    <p class="fragment">Awesome!</p>
+                </section>
+                <section>
+                    <h2>Immutable Host?</h2>
+                    <p>An immutable host is one where the OS is delivered in such a way that it is difficult or impossible to modify</p>
+                    <div class="fragment">
+                        <p>Allows for hosts to become disposable (i.e. cattle)</p>
+                        <p>Provides a foundation for repeatble deployments (i.e. <a href="https://martinfowler.com/bliki/PhoenixServer.html">phoenix servers</a>)<p>
+                        <p>Typically delivered as image (or image-like artifact)<p>
+                    <div class="fragment">
+                        <p>Fedora/Red Hat Atomic Host</p>
+                        <p>Container Linux (Gentoo based)</p>
+                        <p>Endless OS (Debian based)</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Comparing Silverblue to Fedora Workstation</h2>
+                    <p>Both share the following:</p>
+                    <div class="fragment">
+                        <p>RPMs from the Fedora ecosystem</p>
+                        <p>Support package installation (although differently)<p>
+                        <p>Can run containers and Flatpaks<p>
+                    </div>
+                </section>
+                <section>
+                    <h2>Differences</h2>
+                    <div class="fragment">
+                        <p><strong>Filesystem mutability</strong></p>
+                        <p>Only /var and /etc are writeable on Silverblue</p>
+                    </div>
+                    <div class="fragment">
+                        <p><strong>Upgrade mechanisms</strong></p>
+                        <p>Silverblue uses atomic, transactional updates</p>
+                        <p>Running system is not touched during updates</p>
+                        <p>You can pull the plug on a Silverblue host during an upgrade</p>
+                        <p>Tradeoff:  reboot to get into upgraded OS</p>
+                    </div>
+                    <div class="fragment">
+                        <p><strong>Delivery Mechanism</strong></p>
+                        <p>Silverblue has OS delivered as ostree commit</p>
+                        <p>Although both can install packages as RPMs</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>What is ostree + rpm-ostree?</h2>
+                    <p><a href="https://github.com/ostreedev/ostree">ostree</a> can be simplified as "git for operating systems"</p>
+                    <p>Provides a content-addressed object store for tracked files</p>
+                    <p>Files are de-duplicated via hardlinks</p>
+                    <p>Can handle bootloader configuration, management of /etc</p>
+                    <div class="fragment">
+                        <pre><code data-trim contenteditable>
+$ ostree --repo=repo init mode=archive
+$ mkdir tree && cd tree
+$ echo "foo" > 1
+$ echo "bar" > 2
+$ mkdir subdir
+$ cp /usr/share/dict/words subdir/words
+$ ostree commit --repo=../repo --branch=master --subject="initial commit"
+9e18627134f378b4e433a9a8fee429b875b26d41e236672f1f58366492691a6d
+$ cd .. && mkdir checkout && cd checkout
+$ ostree --repo=../repo checkout master
+$ ls -l master/
+total 8
+-rw-rw-r--. 2 miabbott miabbott  4 Dec 31  1969 1
+-rw-rw-r--. 2 miabbott miabbott  4 Dec 31  1969 2
+drwxrwxr-x. 2 miabbott miabbott 60 Dec 31  1969 subdir
+                        </code></pre>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+	              <h2>Trimming desktop apps</h2>
+                <p>Distribution flatpaks are coming</p>
+                <p>yum remove desktop apps, replace with flatpak</p>
+                <p class="fragment">Up to you, and not the primary subject of this talk</p>
+            </section>
+
+            <section>
+                <section>
+	                  <h2>Setting up a dev/pet container: tech + install</h2>
+	                  <p>Use container tech of your choice - I use docker,nspawn,bwrap</p>
+                    <p><a href="https://github.com/cgwalters/dockerfiles/tree/master/fdev">My "fdev" Dockerfile</a></p>
+                    <pre><code data-trim contenteditable>
+# https://pagure.io/fedora-kickstarts/blob/a8e3bf46817ca30f0253b025fcd829a99b1eb708/f/fedora-docker-base.ks#_22
+sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
+yum -y install bash-completion yum-utils tmux sudo powerline \
+    gcc clang ccache ... gdb rust ...
+dnf builddep -y glib2 systemd ostree rpm-ostree
+                    </code></pre>
+                </section>
+
+                <section>
+	                  <h2>dev container: sharing data + permissions</h2>
+                    <p>Share data between containers and host: git repos, etc</p>
+                    <pre><code data-trim contenteditable>
+sudo chcon -R -h -t container_file_t /var/srv
+                    </code></pre>
+	                  <p>Permissions</p>
+                    <pre><code data-trim contenteditable>
+USER user
+ENTRYPOINT ["/usr/bin/tmux", "-l"]
+LABEL RUN "docker run --init -ti --privileged -v /srv:/srv:rslave --net=host
+           --name \${NAME} --env CONTAINER_NAME=\${NAME} \${IMAGE}"
+                    </code></pre>
+                </section>
+
+                <section>
+	                  <h2>Running</h2>
+                    <pre><code data-trim contenteditable>
+$ atomic run cgwalters/fdev
+                    </code></pre>
+
+                    <div class="fragment">
+                    <p>Avoid confusion by using gnome-terminal profiles</p>
+                    <pre><code data-trim contenteditable>
+cat ~/.config/systemd/user/default.target.wants/verbum-terminal@Containers.service
+[Service]
+Type=simple
+ExecStart=/usr/libexec/gnome-terminal-server --class %I --app-id org.verbum.terminal.%I
+
+[Install]
+WantedBy=default.target
+                    </code></pre>
+                    </div>
+                </section>
+
+            </section>
+
+            <section>
+                <section>
+	                  <h2>oc cluster vs pet containers</h2>
+	                  <p><b>Kubernetes</b>: All about services; run your web app,
+	                  database, push local container to public cluster</p>
+                    <hr>
+                    <p>pet/dev container is for not-services</p>
+                </section>
+                <section>
+                    <h2>Testing a new version of git: how not to do it</h2>
+                    <p>Build a local image in oc and oc rsh: Awkward</p>
+                    <p>Pull image from Docker Hub: Ehhh no</p>
+                    <div class="fragment">
+                        <p>Rebase host to Fedora rawhide: No!</p>
+                        <p>Start a rawhide VM: No!</p>
+                    </div>
+                    <p class="fragment">Fedora modularity/SCLs: <i>Whole Big Topic</i></p>
+                </section>
+                <section>
+                    <h2>Testing a new version of git via containers</h2>
+                    <p>yum --enablerepo=rawhide install git in dev container: Sure</p>
+                    <p>Build git from git master: <i>Now we're talking</i></p>
+                    <p>
+                        Your pet container can easily access host git repos:<br>Use new git "for real"
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+	                  <h2>Developing the host userspace</h2>
+	                  <p>systemd, rpm-ostree, gnome-shell, flatpak, NetworkManager</p>
+                    <p>Container: Generate RPM or:<br>make install DESTDIR=/srv/tmp/rootfs</p>
+                    <p>On host: ostree admin unlock (traditional: snapshot?)</p>
+                    <p>On host: Install RPM, rsync -rlv /srv/tmp/rootfs/usr/ /usr/</p>
+                </section>
+
+                <section>
+	                  <h2>Developing the host: Or virtualization!</h2>
+	                  <p>install virt-manager, vagrant-libvirt, etc.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+	                  <h2>Downsides</h2>
+	                  <p>Now you have (at least) two things to keep updated</p>
+	                  <p>Script yum update in container, and (or) periodic host-side rebuilds</p>
+                    <div class="fragment">
+	                      <p>Context switching a lot, IDEs may not understand how to exec in containers</p>
+                        <p>GNOME Builder does flatpak...but not other containers</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+	                  <h2>Security is hard</h2>
+	                  <p>The /srv approach is OK but now you have two ~/.bash_history</p>
+	                  <p>Sharing /home means container can write ~/.bashrc:<br>Game Over</p>
+	                  <p class="fragment">I found it hard to do non-privileged container</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+	                  <h2>Wishlist and the future</h2>
+	                  <p>How are <i>you</i> containerizing?  Let's collaborate!<br><b>atomic-devel@lists.projectatomic.io</b></p>
+                    <p>Let's change the default bash prompt!</p>
+                    <p>Terminal GUI app for shells in containers</p>
+                    <div class="fragment">
+                        <hr>
+                        <p>A named, polished project for pet containers</p>
+                    </div>
+                </section>
+            </section>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+		</script>
+  </body>
+</html>
