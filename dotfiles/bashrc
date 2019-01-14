@@ -141,19 +141,19 @@ alias acj="pushd ~/workspaces/atomic-ci-jobs/"
 alias installer="pushd ~workspaces/go/src/github.com/openshift/installer"
 
 # Run htop in a container
-alias htop="sudo podman run -it --rm --pid=host localhost/miabbott/htop"
+alias htop="sudo chrt --idle 0 podman run -it --rm --pid=host localhost/miabbott/htop"
 
 # handy for doing local ostree tests
 alias ost="ostree --repo=repo"
 
 # coreos-assembler
-alias coreos-assembler="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv quay.io/coreos-assembler/coreos-assembler"
-alias local-ca="podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
-alias dev-ca="podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
+alias coreos-assembler="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv quay.io/coreos-assembler/coreos-assembler"
+alias local-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
+alias dev-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 
 # provide alias for jq when not in container
 if [[ "$__in_dockerenv" != yes ]]; then
-    alias jq="podman run --rm -i quay.io/miabbott/jq"
+    alias jq="chrt --idle 0 podman run --rm -i quay.io/miabbott/jq"
 fi
 
 ### ERRATA ###
