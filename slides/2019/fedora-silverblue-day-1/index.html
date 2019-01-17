@@ -87,7 +87,7 @@
                         <h2>Different Upgrade Mechanisms</h2>
                         <div class="fragment" style="font-size: smaller;">
                             <p>Silverblue uses atomic, transactional updates</p>
-                            <p>Running system is not touched during updates</p>
+                            <p>Running system is not touched during updates (thank you <strong>bubblewrap</strong>)</p>
                             <p>You can pull the plug on a Silverblue host during an upgrade</p>
                             <p>Tradeoff: reboot to get into upgraded OS</p>
                         </div>
@@ -99,7 +99,7 @@
                     <section>
                         <h2>Different Delivery Mechanisms</h2>
                         <div class="fragment">
-                            <p>Silverblue has OS delivered as ostree commit</p>
+                            <p>Silverblue has OS delivered as OSTree commit</p>
                             <p>Although both can install packages as RPMs</p>
                         </div>
                     </section>
@@ -138,7 +138,7 @@ drwxrwxr-x. 2 miabbott miabbott 60 Dec 31  1969 subdir
                         <h2>Quoting the rpm-ostree documentation...</h2>
                         <p><a href="https://github.com/projecatomic/rpm-ostree">rpm-ostree</a> is a hybrid image/package system</p>
                         <p class="fragment">Uses <strong>libostree</strong> as the base image format</p>
-                        <p class="fragment">Accepts RPMs on the server side for composes and client side for package layering</p>
+                        <p class="fragment">Accepts RPMs on the server side for composes and client side for package layering using libdnf</p>
                         <p class="fragment">Primary entrypoint for managing your Silverblue OS</p>
                     </section>
                 </section>
@@ -402,6 +402,7 @@ Deployments:
                     <section>
                         <h2>Package Layering</h2>
                         <p class="fragment">Paradigm is to use containers; package layering is a last resort (IMO)</p>
+                        <p class="fragment">Also useful for "host extensions" - libvirt, pcsc-lite
                         <p class="fragment">Creates a new ostree commit that includes package changes</p>
                         <p class="fragment">Able to override base package set with remove/replace</p>
                         <p class="fragment">Package layers are tracked with base OS; can be upgraded</p>
