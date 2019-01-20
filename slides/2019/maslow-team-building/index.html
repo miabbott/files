@@ -52,10 +52,8 @@
                         </div>
                     </section>
                     <section>
-                        <div class="fragment">
                             <h2>Be Agile</h2>
                             <img src="stay-agile.jpg" />
-                        </div>
                     </section>
                 </section>
 
@@ -69,7 +67,7 @@
                     <section>
                         <h2>Problems of the "Old Way"</h2>
                         <div class="fragment">
-                            <p>Silos breed poor communication + collaboration</p>
+                            <p>Silos breed poor communication + lack of collaboration</p>
                             <p>Poor model for accountability; leads to "throwing code over the wall"</p>
                             <p>Not conducive to feedback or improvement</p>
                             <p>Interactions can be stressful</p>
@@ -109,346 +107,118 @@
 
                 <section>
                     <section>
-                        <h2>Package Layering</h2>
-                        <p class="fragment">Paradigm is to use containers; package layering is a last resort (IMO)</p>
-                        <p class="fragment">Creates a new ostree commit that includes package changes</p>
-                        <p class="fragment">Able to override base package set with remove/replace</p>
-                        <p class="fragment">Package layers are tracked with base OS; can be upgraded</p>
+                        <h2>Belongingness</h2>
+                        <p style="font-size: smaller;">Intimate relationships, friends...co-workers?</p>
+                        <p class="fragment">It is human nature to want to belong to a group</p>
+                        <p class="fragment">Groups are strengthened through relationships built over time</p>
+                        <p class="fragment">Stronger relationships result in more trust</p>
+                        <p class="fragment">More trust allows for honest, open (sometimes heated!) communication</p>
                     </section>
                     <section>
-                        <h2>Examples!</h2>
-                        <div class="fragment">
-                            <p><strong>rpm-ostree install/uninstall</strong></p>
-                            <pre><code data-trim contenteditable>
-$ sudo rpm-ostree install jq
-Checking out tree ad2a133... done
-Enabled rpm-md repositories: updates fedora
-rpm-md repo 'updates' (cached); generated: 2019-01-12T01:49:26Z
-rpm-md repo 'fedora' (cached); generated: 2018-10-24T22:20:15Z
-Importing rpm-md... done
-Resolving dependencies... done
-Will download: 2 packages (355.6 kB)
-Downloading from 'fedora'... done
-Downloading from 'updates'... done
-Importing packages... done
-Checking out packages... done
-Running pre scripts... done
-Running post scripts... done
-Writing rpmdb... done
-Writing OSTree commit... done
-Staging deployment... done
-Added:
-  jq-1.5-13.fc29.x86_64
-  oniguruma-6.9.1-1.fc29.x86_64
-Run "systemctl reboot" to start a reboot
-
-$ rpm-ostree status
-State: idle
-AutomaticUpdates: disabled
-Deployments:
-  ostree://fedora-workstation:fedora/29/x86_64/silverblue
-                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
-                BaseCommit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
-              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
-           LayeredPackages: jq
-
-● ostree://fedora-workstation:fedora/29/x86_64/silverblue
-                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
-                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
-              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
-$ jq
--bash: jq: command not found
-                            </code></pre>
-                        </div>
+                        <h2>Belongingness: Building Relationships</h2>
+                        <p class="fragment">Best method for growing relationships through in-person interactions</p>
+                        <p class="fragment" style="font-size: smaller;">Can be approximated with video calls</p>
+                        <p class="fragment">Interactions can (and should!) happen during and after work hours</p>
+                        <p class="fragment">At least one in-person meeting with entire team per year</p>
+                        <p class="fragment">Don't forget your remote team members!</p>
                     </section>
                     <section>
-                        <h2>More Examples!</h2>
-                        <div class="fragment">
-                            <p><strong>rpm-ostree override replace</strong></p>
-                            <pre><code data-trim contenteditable>
-$ sudo rpm-ostree override replace https://kojipkgs.fedoraproject.org//packages/podman/0.10.1.3/4.gitdb08685.fc29/x86_64/podman-0.10.1.3-4.gitdb08685.fc29.x86_64.rpm
-Downloading 'https://kojipkgs.fedoraproject.org//packages/podman/0.10.1.3/4.gitdb08685.fc29/x86_64/podman-0.10.1.3-4.gitdb08685.fc29.x86_64.rpm'... done!
-Checking out tree ad2a133... done
-Enabled rpm-md repositories: updates fedora
-Updating metadata for 'updates'... done
-rpm-md repo 'updates'; generated: 2019-01-12T01:49:26Z
-Updating metadata for 'fedora'... done
-rpm-md repo 'fedora'; generated: 2018-10-24T22:20:15Z
-Importing rpm-md... done
-Resolving dependencies... done
-Applying 1 override
-Processing packages... done
-Running pre scripts... done
-Running post scripts... done
-Writing rpmdb... done
-Writing OSTree commit... done
-Staging deployment... done
-Downgraded:
-  podman 1:0.12.1.2-1.git9551f6b.fc29 -> 1:0.10.1.3-4.gitdb08685.fc29
-Run "systemctl reboot" to start a reboot
-
-$ rpm-ostree status
-State: idle
-AutomaticUpdates: disabled
-Deployments:
-  ostree://fedora-workstation:fedora/29/x86_64/silverblue
-                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
-                BaseCommit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
-              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
-      ReplacedBasePackages: podman 1:0.12.1.2-1.git9551f6b.fc29 -> 1:0.10.1.3-4.gitdb08685.fc29
-
-● ostree://fedora-workstation:fedora/29/x86_64/silverblue
-                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
-                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
-              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
-                            </code></pre>
-                        </div>
+                        <img src="interaction.jpg" />
                     </section>
                     <section>
-                        <h2>Another Example!</h2>
-                        <div class="fragment">
-                            <p><strong>rpm-ostree override remove</strong></p>
-                            <pre><code data-trim contenteditable>
-$ rpm -ql virtualbox-guest-additions | grep /usr/bin
-/usr/bin/VBoxClient
-/usr/bin/VBoxClient-all
-/usr/bin/VBoxControl
-
-$ sudo rpm-ostree override remove virtualbox-guest-additions
-Checking out tree ad2a133... done
-Resolving dependencies... done
-Applying 1 override
-Processing packages... done
-Writing rpmdb... done
-Writing OSTree commit... done
-Staging deployment... done
-Removed:
-  virtualbox-guest-additions-5.2.22-1.fc29.x86_64
-Run "systemctl reboot" to start a reboot
-...
-
-$ rpm-ostree status
-State: idle
-AutomaticUpdates: disabled
-Deployments:
-● ostree://fedora-workstation:fedora/29/x86_64/silverblue
-                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
-                BaseCommit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
-              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
-       RemovedBasePackages: virtualbox-guest-additions-5.2.22-1.fc29.x86_64
-...
-
-$ ls -l /usr/bin/VBoxClient
-ls: cannot access '/usr/bin/VBoxClient': No such file or directory
-                            </code></pre>
-                        </div>
+                        <h2>Belongingness: Confidants + Champions</h2>
+                        <p class="fragment">Find a confidant on your team that you trust</p>
+                        <p class="fragment">Allows you to share thoughts, ideas, opinions, gripes privately</p>
+                        <p class="fragment">Even better: find a champion</p>
+                        <p class="fragment">Supports + encourages your work, ideas, opinions</p>
                     </section>
                 </section>
 
                 <section>
                     <section>
-                        <h2>Containers and Container Tools</h2>
-                        <p class="fragment">Containers are Linux</p>
-                        <p class="fragment" style="font-size:50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
-                        <p class="fragment">cgroups, user namespaces, network namespaces...</p>
-                        <p class="fragment">Popularized via Docker and adoption of microservices</p>
-                        <p class="fragment">Usually a single process per container (usually...)</p>
-                    </section>
-                    <section>
-                        <img src="containers-are-linux.png" />
-                        <p style="font-size:50%">Image credit: <a href="https://blog.openshift.com/containers-are-linux/">https://blog.openshift.com/containers-are-linux/</a>
-                    </section>
-                    <section>
-                        <h2>Previous Tooling</h2>
-                        <p class="fragment">Don't say the D-word or you make Dan Walsh weep</p>
-                        <img class="fragment" src="dockah.gif" />
-                        <p class="fragment">Also, stop disabling SELinux - <a href="https://stopdisablingselinux.com/">https://stopdisablingselinux.com/</a></p>
-                    </section>
-                    <section>
-                        <h2>New Hotness!</h2>
-                        <p class="fragment">A trinity of buildah, podman, skopeo</p>
+                        <h2>Esteem</h2>
+                        <p style="font-size: smaller;">Prestige and feeling of accomplishment</p>
+                        <p class="fragment">Everyone wants to feel like their contributions are important</p>
                         <div class="fragment">
-                            <hr />
-                            <p><a href="https://github.com/containers/buildah">Buildah</a> - use it to build your containers images</p>
-                            <p><a href="https://github.com/containers/libpod">Podman</a> - use it to run and manage your containers</p>
-                            <p><a href="https://github.com/containers/skopeo">Skopeo</a> - use it to inspect registries, copy container images</a>
+                            <p >How?  Practice regular feedback!</p>
+                            <img src="feedback.jpg" />
                         </div>
                     </section>
                     <section>
-                        <h2>Buildah</h2>
-                        <div class="fragment">
-                            <p>Supports building container images from Dockerfiles</p>
-                            <p>Can mount working container filesystem for manipulation</p>
-                            <p>Supports OCI image format and Docker image format</p>
-                        </div>
-                        <div class="fragment">
-                            <pre><code data-trim contenteditable>
-$ ctr=$(sudo buildah from scratch)
-$ mp=$(sudo buildah mount $ctr)
-$ sudo dnf -y --installroot=$mp --releasever=29 install jq
-...
-$ sudo buildah commit $ctr jq
-$ sudo buildah unmount $ctr
-$ sudo buildah rm $ctr
+                        <h2>Esteem: Regular Feedback</h2>
+                        <p class="fragment">Show gratitude for things big and small</p>
+                        <p class="fragment">Celebrate achievements within the group and publicly</p>
+                        <p class="fragment">Give advice on how to improve</p>
+                        <p class="fragment" style="font-size: smaller;">Be cautious not to criticize</p>
+                        <p class="fragment">Offer and accept apologies</p>
+                        <p class="fragment">All feedback must be done with respect</p>
+                        <p class="fragment" style="font-size: smaller;">Unjust feedback can cause team members to withdraw</p>
+                    </section>
+                </section>
 
-$ sudo buildah images
-IMAGE NAME                                               IMAGE TAG            IMAGE ID             CREATED AT             SIZE
-localhost/jq                                             latest               17bf11dbaf8a         Jan 13, 2019 14:31     444 MB
-                            </code></pre>
+                <section>
+                    <h2>Self-Actualization</h2>
+                    <p style="font-size: smaller;">Achieving one's full potential, including creative activities</p>
+                    <p class="fragment">Can you pursue self-actualization at work?  Maybe...</p>
+                    <p class="fragment">Having strong, respectful relationships with team members can remove a source of worry</p>
+                    <p class="fragment">Unlocks potential to pursue creative goals or creative solutions</p>
+                    <p class="fragment">Allows you to attempt activities that aren't part of your job description</p>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>The Heirarchy in Practice</h2>
+                        <div class="fragment">
+                            <p><strong>Time and patience</strong></p>
+                            <p>Relationships are not formed overnight</p>
+                            <p>People progress at different pace</p>
+                            <p>Allow strengths and weaknesses to be discovered</p>
+                            <img src="patience.jpg" />
+                        <div>
                     </section>
                     <section>
-                        <h2>Podman</h2>
+                        <h2>The Heirarchy in Practice</h2>
                         <div class="fragment">
-                            <p>Intended as a drop-in replacement for (most of) docker CLI</p>
-                            <p>Supports OCI image format and Docker image format</p>
-                            <p>Doesn't require a daemon running (<a href="https://twitter.com/search?q=%23nobigfatdaemons&f=live">#nobigfatdaemons</a>)</p>
-                            <p>Full management of container life cycle</p>
-                            <p>Can run containers unprivileged (experimental)</p>
-                        </div>
-                        <div class="fragment">
-                            <pre><code data-trim contenteditable>
-$ sudo buildah images
-IMAGE NAME                                               IMAGE TAG            IMAGE ID             CREATED AT             SIZE
-localhost/jq                                             latest               17bf11dbaf8a         Jan 13, 2019 14:31     444 MB
-
-$ sudo podman images
-REPOSITORY     TAG      IMAGE ID       CREATED         SIZE
-localhost/jq   latest   17bf11dbaf8a   9 minutes ago   444 MB
-
-$ rpm-ostree status --json | sudo podman run --rm -i localhost/jq /usr/bin/jq -C .deployments[]?.checksum
-"6792650074abcb68f9f165c2eb63d9a419a01cc619adcd598b83bf93fca1efaa"
-"a83a471e89cb2a292406ca81a3a994d0399453d0f7c7734db0e4185e4f85d28e"
-                            </code></pre>
+                            <p><strong>Frequent Interactions</strong></p>
+                            <p>Utilize Agile activities: standups, retros, ad-hoc "open hours"
+                            <p>Interact during and after work hours</p>
+                            <p>Go visit your office mates!</p>
+                            <img src="visit.jpg" />
                         </div>
                     </section>
                     <section>
-                        <h2>Skopeo</h2>
+                        <h2>The Heirarchy in Practice</h2>
                         <div class="fragment">
-                            <p>Copy an image from and to various storage mechanisms</p>
-                            <p>Inspect a remote image showing its properties including its layers</p>
-                            <p>Delete an image from an image repository</p>
+                            <p><strong>Lead By Example</strong></p>
+                            <p>Team leader(s) need to demonstrate some effort in applying these principles</p>
                         </div>
                         <div class="fragment">
-                            <pre><code data-trim contenteditable>
-$ skopeo inspect docker://registry.fedoraproject.org/fedora:latest
-{
-    "Name": "registry.fedoraproject.org/fedora",
-    "Digest": "sha256:62a63551532c29d266342c2a36282a094e980a8bb1077be10f3ea72f265cfb16",
-    "RepoTags": [
-        "24",
-        "25",
-        "26-modular",
-        "26",
-        "27-aarch64",
-        "27-armhfp",
-        "27-ppc64le",
-        "27-x86_64",
-        "27",
-        "28-aarch64",
-        "28-armhfp",
-        "28-ppc64le",
-        "28-x86_64",
-        "28",
-        "29-aarch64",
-        "29-ppc64le",
-        "29-s390x",
-        "29-x86_64",
-        "29",
-        "30-aarch64",
-        "30-ppc64le",
-        "30-s390x",
-        "30-x86_64",
-        "30",
-        "latest",
-        "rawhide",
-        "30-armhfp",
-        "29-armhfp"
-    ],
-    "Created": "2019-01-09T06:48:29Z",
-    "DockerVersion": "1.10.1",
-    "Labels": {
-        "license": "MIT",
-        "name": "fedora",
-        "vendor": "Fedora Project",
-        "version": "29"
-    },
-    "Architecture": "amd64",
-    "Os": "linux",
-    "Layers": [
-        "sha256:472dbbf50fa66a103d664a1af893a9b4cd9b06524ddb8fa2d1ae04bb4c405749"
-    ]
-}
-                            </code></pre>
+                            <p><strong>Voluntary Participation</strong></p>
+                            <p>Not everyone will be interested in these activities</p>
+                            <p>Do not exclude anyone</p>
+                            <p>Continue to politely invite them to participate</p>
                         </div>
                     </section>
                 </section>
 
                 <section>
-                    <section>
-                        <h2>Flatpaks</h2>
-                        <p>Containers for GUI apps<p>
-                        <div class="fragment">
-                            <p>Uses libostree to store runtimes + apps on disk</p>
-                            <p>Uses <a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a> to allow unprivileged users setup + run containers</a>
-                            <p>Apps are distributed in the <a href="https://github.com/opencontainers/image-spec">OCI image format</a></p>
-                            <p>DBus, systemd, Appstream metadata...</p>
-                            <p>Allows for distribution of apps on any flavor of Linux</p>
-                        </div>
-                    </section>
-                    <section>
-                        <h2>In action...</h2>
-                        <pre><code data-trim content-editable>
-$ flatpak --user remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
-
-$ flatpak --user search spotify
-Application ID                   Version    Branch Remotes Description
-com.spotify.Client               1.0.96.181 stable flathub Online music streaming service
-org.clementine_player.Clementine 1.3.1-git  stable flathub Plays music files and Internet radio
-
-$ flatpak --user install flathub com.spotify.Client
-Required runtime for com.spotify.Client/x86_64/stable (runtime/org.freedesktop.Platform/x86_64/18.08) found in remote flathub
-Do you want to install it? [y/n]: y
-Installing in user:
-org.freedesktop.Platform/x86_64/18.08              flathub 527965a0652d
-org.freedesktop.Platform.Locale/x86_64/18.08       flathub db13dbb8145b
-org.freedesktop.Platform.html5-codecs/x86_64/18.08 flathub 6347e3aa5a5c
-com.spotify.Client/x86_64/stable                   flathub 8f0a500bf0ed
-  permissions: ipc, network, pulseaudio, x11, dri
-  file access: xdg-music:ro, xdg-pictures:ro
-  dbus access: org.freedesktop.Notifications, org.gnome.SessionManager, org.gnome.SettingsDaemon
-  dbus ownership: org.mpris.MediaPlayer2.spotify
-  tags: proprietary
-Is this ok [y/n]: y
-Installing for user: org.freedesktop.Platform/x86_64/18.08 from flathub
-[####################] 776 metadata, 12606 content objects fetched; 268834 KiB transferred in 106 seconds
-Now at 527965a0652d.
-Installing for user: org.freedesktop.Platform.Locale/x86_64/18.08 from flathub
-[####################] 4 metadata, 1 content objects fetched; 16 KiB transferred in 0 seconds
-Now at db13dbb8145b.
-Installing for user: org.freedesktop.Platform.html5-codecs/x86_64/18.08 from flathub
-[####################] 22 metadata, 127 content objects fetched; 2722 KiB transferred in 1 seconds
-Now at 6347e3aa5a5c.
-Installing for user: com.spotify.Client/x86_64/stable from flathub
-[####################] Downloading files: 1024/1024 118.6 MB (3.4 MB/s)
-Now at 8f0a500bf0ed.
-
-$ flatpak --user list
-Ref                                                Options
-com.spotify.Client/x86_64/stable                   user,current
-org.freedesktop.Platform.html5-codecs/x86_64/18.08 user,runtime
-org.freedesktop.Platform/x86_64/18.08              user,runtime
-                        </code></pre>
-                    </section>
+                    <h2>Measuring Your Efforts</h2>
+                    <p class="fragment">There are no metrics to measure your relationships; very subjective</p>
+                    <p class="fragment">Consider questions like the following:</p>
+                    <ul>
+                        <li class="fragment">Do you know more than the name of each team member and where they live?</li>
+                        <li class="fragment">Do you have conversations about things other than work?</li>
+                        <li class="fragment">Have you ever shared a drink or meal with your team?</li>
+                        <li class="fragment">Can you have open disagreements respectflily, with no hurt feelings?</li>
+                        <li class="fragment">Are you able to hold your team members accountable?</li>
+                        <li class="fragment">Are you willing to help your team members achieve their goals?</li>
+                        <li class="fragment">Is your team regliarly delivering their milestones?</li>
+                    </ul>
                 </section>
 
                 <section>
-                    <h2>Going Forward</h2>
-                    <p class="fragment">Still some rough edges to smooth out</p>
-                    <p class="fragment">Enabling automatic OS upgrades by default</p>
-                    <p class="fragment">Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
-                    <p class="fragment">Making Silverblue default Fedora Workstation choice</p>
-                    <p class="fragment">Improving <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">documentation</a>, growing the <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">community</a></p>
-                    <p class="fragment">Containerize more apps</p>
+                    <h2>THANK YOU!</h2>
+                    <img src="excellent.jpg" />
                 </section>
             </div>
         </div>
