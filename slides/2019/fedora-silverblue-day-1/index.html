@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Fedora Silverblue Day 1</title>
+        <title>Getting to Know Fedora Silverblue</title>
 
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -28,7 +28,7 @@
             <div class="slides">
                 <section>
                     <section>
-                        <h2>Day 1 with Fedora Silverblue</h2>
+                        <h2>Getting to Know Fedora Silverblue</h2>
                         <a href="https://silverblue.fedoraproject.org"><img height="350" width="350" src="silverblue-logo.svg" style="border: 0; border-style: none; box-shadow: none;"/></a>
                         <p>DevConf.cz 2019</p>
                         <p style="font-size: smaller;">Micah Abbott - <a href="https://twitter.com/rageear">@rageear</a></p>
@@ -138,9 +138,9 @@ drwxrwxr-x. 2 miabbott miabbott 60 Dec 31  1969 subdir
                     <section>
                         <h2>Quoting the rpm-ostree documentation...</h2>
                         <p><a href="https://github.com/projecatomic/rpm-ostree">rpm-ostree</a> is a hybrid image/package system</p>
-                        <p class="fragment">Uses <strong>libostree</strong> as the base image format</p>
-                        <p class="fragment">Accepts RPMs on the server side for composes and client side for package layering using libdnf</p>
-                        <p class="fragment">Primary entrypoint for managing your Silverblue OS</p>
+                        <p>Uses <strong>libostree</strong> as the base image format</p>
+                        <p>Accepts RPMs on the server side for composes and client side for package layering using libdnf</p>
+                        <p>Primary entrypoint for managing your Silverblue OS</p>
                     </section>
                 </section>
 
@@ -541,11 +541,11 @@ ls: cannot access '/usr/bin/VBoxClient': No such file or directory
                 <section>
                     <section>
                         <h2>Containers and Container Tools</h2>
-                        <p class="fragment">Containers are Linux</p>
-                        <p class="fragment" style="font-size:50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
-                        <p class="fragment">cgroups, user namespaces, network namespaces...</p>
-                        <p class="fragment">Popularized via Docker and adoption of microservices</p>
-                        <p class="fragment">Usually a single process per container (usually...)</p>
+                        <p>Containers are Linux</p>
+                        <p style="font-size:50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
+                        <p>cgroups, user namespaces, network namespaces...</p>
+                        <p>Popularized via Docker and adoption of microservices</p>
+                        <p>Usually a single process per container (usually...)</p>
                     </section>
                     <section>
                         <img src="containers-are-linux.png" />
@@ -553,13 +553,13 @@ ls: cannot access '/usr/bin/VBoxClient': No such file or directory
                     </section>
                     <section>
                         <h2>Previous Tooling</h2>
-                        <p class="fragment">Don't say the D-word or you make Dan Walsh weep</p>
-                        <img class="fragment" src="dockah.gif" />
+                        <p>Don't say the D-word or you make Dan Walsh weep</p>
+                        <img src="dockah.gif" />
                         <p class="fragment">Also, stop disabling SELinux - <a href="https://stopdisablingselinux.com/">https://stopdisablingselinux.com/</a></p>
                     </section>
                     <section>
                         <h2>New Hotness!</h2>
-                        <p class="fragment">A trinity of buildah, podman, skopeo</p>
+                        <p>A trinity of buildah, podman, skopeo</p>
                         <div class="fragment">
                             <hr />
                             <p><a href="https://github.com/containers/buildah">Buildah</a> - use it to build your containers images</p>
@@ -618,8 +618,8 @@ $ rpm-ostree status --json | sudo podman run --rm -i localhost/jq /usr/bin/jq -C
                         <h2>Skopeo</h2>
                         <div class="fragment">
                             <p>Copy an image from and to various storage mechanisms</p>
-                            <p>Inspect a remote image showing its properties including its layers</p>
                             <p>Delete an image from an image repository</p>
+                            <p>Inspect a remote image showing its properties including its layers</p>
                         </div>
                         <div class="fragment">
                             <pre><code data-trim contenteditable>
@@ -683,8 +683,8 @@ $ skopeo inspect docker://registry.fedoraproject.org/fedora:latest
                         <div class="fragment">
                             <p>Uses libostree to store runtimes + apps on disk</p>
                             <p>Uses <a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a> to allow unprivileged users setup + run containers</a>
-                            <p>Apps are distributed in the <a href="https://github.com/opencontainers/image-spec">OCI image format</a></p>
                             <p>DBus, systemd, Appstream metadata...</p>
+                            <p>Apps are distributed in the <a href="https://github.com/opencontainers/image-spec">OCI image format</a></p>
                             <p>Allows for distribution of apps on any flavor of Linux</p>
                         </div>
                     </section>
@@ -736,12 +736,11 @@ org.freedesktop.Platform/x86_64/18.08              user,runtime
 
                 <section>
                     <h2>Going Forward</h2>
-                    <p class="fragment">Still some rough edges to smooth out</p>
-                    <p class="fragment">Enabling automatic OS upgrades by default</p>
-                    <p class="fragment">Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
-                    <p class="fragment">Making Silverblue default Fedora Workstation choice</p>
-                    <p class="fragment">Improving <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">documentation</a>, growing the <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">community</a></p>
-                    <p class="fragment">Containerize more apps</p>
+                    <p>Still some rough edges to smooth out</p>
+                    <p>Enabling automatic OS upgrades by default</p>
+                    <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
+                    <p>Making Silverblue default Fedora Workstation choice</p>
+                    <p>Improving <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">documentation</a>, growing the <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">community</a></p>
                 </section>
             </div>
         </div>
