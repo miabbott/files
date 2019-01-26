@@ -437,11 +437,11 @@ Deployments:
                 <section>
                     <section>
                         <h2>Package Layering</h2>
-                        <p class="fragment">Paradigm is to use containers; package layering is a last resort (IMO)</p>
-                        <p class="fragment">Also useful for "host extensions" - libvirt, pcsc-lite
-                        <p class="fragment">Creates a new ostree commit that includes package changes</p>
-                        <p class="fragment">Able to override base package set with remove/replace</p>
-                        <p class="fragment">Package layers are tracked with base OS; can be upgraded</p>
+                        <p>Paradigm is to use containers; package layering is a last resort (IMO)</p>
+                        <p>Also useful for "host extensions" - libvirt, pcsc-lite
+                        <p>Creates a new ostree commit that includes package changes</p>
+                        <p>Able to override base package set with remove/replace</p>
+                        <p>Package layers are tracked with base OS; can be upgraded</p>
                     </section>
                     <section>
                         <h2>Examples!</h2>
@@ -590,12 +590,13 @@ ls: cannot access '/usr/bin/VBoxClient': No such file or directory
                     </section>
                     <section>
                         <h2>New Hotness!</h2>
-                        <p>A trinity of buildah, podman, skopeo</p>
+                        <p>A new set of tooling in the form of buildah, podman, skopeo, and fedora-toolbox</p>
                         <div class="fragment">
                             <hr />
                             <p><a href="https://github.com/containers/buildah">Buildah</a> - use it to build your containers images</p>
                             <p><a href="https://github.com/containers/libpod">Podman</a> - use it to run and manage your containers</p>
-                            <p><a href="https://github.com/containers/skopeo">Skopeo</a> - use it to inspect registries, copy container images</a>
+                            <p><a href="https://github.com/containers/skopeo">Skopeo</a> - use it to inspect registries, copy container images</p>
+                            <p><a href="https://github.com/debarshiray/fedora-toolbox/">Fedora Toolbox</a> - use it to create "pet" development containers</p>
                         </div>
                     </section>
                     <section>
@@ -762,6 +763,13 @@ com.spotify.Client/x86_64/stable                   user,current
 org.freedesktop.Platform.html5-codecs/x86_64/18.08 user,runtime
 org.freedesktop.Platform/x86_64/18.08              user,runtime
                         </code></pre>
+                    </section>
+                    <section>
+                        <h2>Fedora Toolbox</h2>
+                        <p>Creates a fully mutable container for installing dev tools (or any package)</p>
+                        <p>Runs rootless container (i.e. no 'sudo podman run')</p>
+                        <p>Can be package layered as an RPM or run directly as a script</p>
+                        <p>Automagically mounts in your $HOME directory</p>
                     </section>
                 </section>
 
