@@ -150,14 +150,49 @@ drwxrwxr-x. 2 miabbott miabbott 60 Dec 31  1969 subdir
                         <p>Current status: <strong>rpm-ostree status</strong></p>
                         <div class="fragment">
                             <pre><code data-trim contenteditable>
-$ rpm-ostree status
-State: idle
-AutomaticUpdates: disabled
-Deployments:
-● ostree://fedora-workstation:fedora/29/x86_64/silverblue
-                   Version: 29.20190105.0 (2019-01-05T01:14:13Z)
-                    Commit: 8bc882c6b40c526b63a0197fe7e0df31149255b9429f224937a7ee6e3415753d
+$ rpm-ostree status -a
+State: idle                                                                                                                                                                                                       
+AutomaticUpdates: stage; rpm-ostreed-automatic.timer: last run 6 days ago
+Deployments:                                                             
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190119.0 (2019-01-19T00:53:06Z)
+                BaseCommit: f027d3d70a4da161200382ad85c16ff1b6b5c4c05d357b962ed10fda6f2dc395
               GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+             SecAdvisories: FEDORA-2019-a8ffcff7ee  Low        openssl-1:1.1.1a-1.fc29.x86_64
+                            FEDORA-2019-a8ffcff7ee  Low        openssl-libs-1:1.1.1a-1.fc29.x86_64
+                              CVE-2018-0495 OpenSSL: ROHNP - Key Extraction Side Channel in Multiple Crypto Libraries [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1591170
+                              CVE-2018-0735 openssl: timing side channel attack in ECDSA signature generation [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1644357
+                              CVE-2018-0734 openssl: timing side channel attack in the DSA signature algorithm [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1644366
+                            FEDORA-2019-ae92ca8981  Low        libjpeg-turbo-2.0.0-3.fc29.x86_64
+                              CVE-2018-19664 libjpeg-turbo: heap-based buffer over-read in the put_pixel_rows function in wrbmp.c [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1656219
+                              CVE-2018-20330 libjpeg-turbo: heap-based buffer overflow in tjLoadImage [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1665224
+                            FEDORA-2019-f812c9fb22  Moderate   kernel-headers-4.19.15-300.fc29.x86_64
+                              CVE-2019-3459 kernel: Heap address information leak while using L2CAP_GET_CONF_OPT
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1663176
+                              CVE-2019-3460 kernel: Heap address information leak while using L2CAP_PARSE_CONF_RSP
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1663179
+                      Diff: 42 upgraded, 1 removed
+           LayeredPackages: cockpit-bridge compat-ffmpeg28 ffmpeg-libs krb5-workstation libvirt libvirt-client libvirt-daemon-kvm libvirt-devel qemu-kvm tmux vagrant-libvirt vim-enhanced virt-install
+                            virt-manager
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190117.0 (2019-01-17T00:55:06Z)
+                BaseCommit: ef211d6ba2a0facdc6f1d12f77fe99451286a43f9a093fdffb9dd6f595b8a06f
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+           LayeredPackages: cockpit-bridge compat-ffmpeg28 ffmpeg-libs krb5-workstation libvirt libvirt-client libvirt-daemon-kvm libvirt-devel qemu-kvm tmux vagrant-libvirt vim-enhanced virt-install
+                            virt-manager
+
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190115.0 (2019-01-15T01:10:09Z)
+                BaseCommit: 563df16841c048e9c43e83adf2fff952aafcea40495b2a95b8365f7b13443add
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+           LayeredPackages: cockpit-bridge compat-ffmpeg28 ffmpeg-libs krb5-workstation libvirt libvirt-client libvirt-daemon-kvm libvirt-devel qemu-kvm tmux vagrant-libvirt vim-enhanced virt-install
+                            virt-manager
                             </code></pre>
                         </div>
                     </section>
