@@ -74,6 +74,7 @@ dnf_cmd install \
                    golang-github-cpuguy83-go-md2man \
                    gpg \
                    gpgme-devel \
+                   hostname \
                    iputils \
                    libassuan-devel \
                    libgpg-error-devel \
