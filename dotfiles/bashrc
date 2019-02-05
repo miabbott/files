@@ -151,6 +151,9 @@ alias coreos-assembler="chrt --idle 0 podman run --rm --net=host -ti --privilege
 alias local-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 alias dev-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 
+# pet container
+alias myprecious="chrt --idle 0 podman run --net=host --rm -it --privileged -v /etc/pki:/etc/pki:ro -v /var/srv:/var/srv -v /var/cache/dnf:/var/cache/dnf -v $HOME:$HOME -v /etc/localtime:/etc/localtime localhost/miabbott/myprecious:29"
+
 # provide alias for jq when not in container
 if [[ "$__in_dockerenv" != yes ]]; then
     alias jq="chrt --idle 0 podman run --rm -i quay.io/miabbott/jq"
