@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>Getting to Know Fedora Silverblue</title>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/league.css" id="theme">
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <section>
+                        <h2>Getting to Know Fedora Silverblue</h2>
+                        <a href="https://silverblue.fedoraproject.org"><img height="350" width="350" src="silverblue-logo.svg" style="border: 0; border-style: none; box-shadow: none;"/></a>
+                        <p style="font-size: smaller;">Micah Abbott - <a href="https://twitter.com/rageear">@rageear</a></p>
+                        <p style="font-size: smaller;">Principal Quality Engineer - Red Hat</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>What is Fedora Silverblue?</h2>
+                        <p>Fedora Silverblue is...</p>
+                        <p class="fragment">Fedora</p>
+                        <p class="fragment">RPMs (delivered via ostree)</p>
+                        <p class="fragment">Containers</p>
+                        <p class="fragment">Flatpaks</p>
+                        <p class="fragment">an immutable host</p>
+                        <p class="fragment">Awesome!</p>
+                    </section>
+                    <section>
+                        <h2>Immutable Host?</h2>
+                        <p><em>See also: immutable infrastructure</em></p>
+                        <p>An immutable host is where the OS is delivered in such a way that it is difficult or impossible to modify</p>
+                        <div class="fragment">
+                            <p>Allows for hosts to become disposable (i.e. cattle)</p>
+                            <p>Provides a foundation for repeatable deployments (i.e. <a href="https://martinfowler.com/bliki/PhoenixServer.html">phoenix servers</a>)<p>
+                            <p>Typically delivered as image (or image-like artifact)<p>
+                        <div class="fragment">
+                            <h3>Previous examples:</h3>
+                            <ul>
+                                <li><a href="https://projectatomic.io">CentOS/Fedora/Red Hat Atomic Host</a></li>
+                                <li><a href="https://coreos.com/why/">Container Linux</a> (Gentoo based)</li>
+                                <li><a href="https://coreos.com/why/">Endless OS</a> (Debian based)</li>
+                            </ul>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Comparing Silverblue to Fedora Workstation</h2>
+                        <p>Both share the following:</p>
+                        <div class="fragment">
+                            <p>RPMs from the Fedora ecosystem</p>
+                            <p>Support package installation (although differently)<p>
+                            <p>Can run containers and Flatpaks<p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Filesystem Mutability</h2>
+                        <p class="fragment">Only /var and /etc are writeable on Silverblue</p>
+                        <div class="fragment">
+                            <img src="nvidia-rm-rf-usr.png" style="border: 0; border-style: none; box-shadow: none;" />
+                            <p style="font-size: 50%;">Image credit: <a href="https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123">https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123</a></p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Upgrade Mechanisms</h2>
+                        <div class="fragment" style="font-size: smaller;">
+                            <p>Silverblue uses atomic, transactional updates</p>
+                            <p>Running system is not touched during updates (thank you <strong>bubblewrap</strong>)</p>
+                            <p>You can pull the plug on a Silverblue host during an upgrade</p>
+                            <p>Tradeoff: reboot to get into upgraded OS</p>
+                        </div>
+                        <div class="fragment">
+                            <img src="x-crash-systemd-udev.png" style="border: 0; border-style: none; box-shadow: none;" /></p>
+                            <p style="font-size: 50%;">Image credit: <a href="https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/">https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/</a></p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Delivery Mechanisms</h2>
+                        <div class="fragment">
+                            <p>Silverblue has OS delivered as OSTree commit</p>
+                            <p>Although both can install packages as RPMs</p>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>What is ostree + rpm-ostree?</h2>
+                        <p style="font-size: smaller;"><a href="https://github.com/ostreedev/ostree">(lib)ostree</a> can be simplified as "git for operating systems"</p>
+                        <p style="font-size: smaller;">Files are checksummed + tracked via content-addressed object store</p>
+                        <p style="font-size: smaller;">Files are de-duplicated via hardlinks</p>
+                        <p style="font-size: smaller;">Can handle bootloader configuration, management of /etc</p>
+                        <div class="fragment">
+                            <pre><code  data-trim contenteditable>
+$ ostree --repo=/var/srv/repo init mode=archive
+$ mkdir /tmp/tree && cd /tmp/tree
+$ echo "foo" > 1
+$ echo "bar" > 2
+$ mkdir subdir
+$ cp /usr/share/dict/words subdir/words
+
+$ ostree commit --repo=/var/srv/repo --branch=master --subject="initial commit"
+9e18627134f378b4e433a9a8fee429b875b26d41e236672f1f58366492691a6d
+
+$ cd $(mktemp -d)
+$ ostree --repo=/var/srv/repo checkout master
+$ ls -l master/
+total 8
+-rw-rw-r--. 2 miabbott miabbott  4 Dec 31  1969 1
+-rw-rw-r--. 2 miabbott miabbott  4 Dec 31  1969 2
+drwxrwxr-x. 2 miabbott miabbott 60 Dec 31  1969 subdir
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Quoting the rpm-ostree documentation...</h2>
+                        <p><a href="https://github.com/projecatomic/rpm-ostree">rpm-ostree</a> is a hybrid image/package system</p>
+                        <p>Uses <strong>libostree</strong> as the base image format</p>
+                        <p>Accepts RPMs on the server side for composes and client side for package layering using libdnf</p>
+                        <p>Primary entrypoint for managing your Silverblue OS</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Managing the Silverblue OS</h2>
+                        <p>Current status: <strong>rpm-ostree status</strong></p>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ rpm-ostree status -a
+State: idle
+AutomaticUpdates: stage; rpm-ostreed-automatic.timer: last run 6 days ago
+Deployments:
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190119.0 (2019-01-19T00:53:06Z)
+                BaseCommit: f027d3d70a4da161200382ad85c16ff1b6b5c4c05d357b962ed10fda6f2dc395
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+             SecAdvisories: FEDORA-2019-a8ffcff7ee  Low        openssl-1:1.1.1a-1.fc29.x86_64
+                            FEDORA-2019-a8ffcff7ee  Low        openssl-libs-1:1.1.1a-1.fc29.x86_64
+                              CVE-2018-0495 OpenSSL: ROHNP - Key Extraction Side Channel in Multiple Crypto Libraries [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1591170
+                              CVE-2018-0735 openssl: timing side channel attack in ECDSA signature generation [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1644357
+                              CVE-2018-0734 openssl: timing side channel attack in the DSA signature algorithm [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1644366
+                            FEDORA-2019-ae92ca8981  Low        libjpeg-turbo-2.0.0-3.fc29.x86_64
+                              CVE-2018-19664 libjpeg-turbo: heap-based buffer over-read in the put_pixel_rows function in wrbmp.c [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1656219
+                              CVE-2018-20330 libjpeg-turbo: heap-based buffer overflow in tjLoadImage [fedora-all]
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1665224
+                            FEDORA-2019-f812c9fb22  Moderate   kernel-headers-4.19.15-300.fc29.x86_64
+                              CVE-2019-3459 kernel: Heap address information leak while using L2CAP_GET_CONF_OPT
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1663176
+                              CVE-2019-3460 kernel: Heap address information leak while using L2CAP_PARSE_CONF_RSP
+                              https://bugzilla.redhat.com/show_bug.cgi?id=1663179
+                      Diff: 42 upgraded, 1 removed
+           LayeredPackages: cockpit-bridge compat-ffmpeg28 ffmpeg-libs krb5-workstation libvirt libvirt-client libvirt-daemon-kvm libvirt-devel qemu-kvm tmux vagrant-libvirt vim-enhanced virt-install
+                            virt-manager
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190117.0 (2019-01-17T00:55:06Z)
+                BaseCommit: ef211d6ba2a0facdc6f1d12f77fe99451286a43f9a093fdffb9dd6f595b8a06f
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+           LayeredPackages: cockpit-bridge compat-ffmpeg28 ffmpeg-libs krb5-workstation libvirt libvirt-client libvirt-daemon-kvm libvirt-devel qemu-kvm tmux vagrant-libvirt vim-enhanced virt-install
+                            virt-manager
+
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190115.0 (2019-01-15T01:10:09Z)
+                BaseCommit: 563df16841c048e9c43e83adf2fff952aafcea40495b2a95b8365f7b13443add
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+           LayeredPackages: cockpit-bridge compat-ffmpeg28 ffmpeg-libs krb5-workstation libvirt libvirt-client libvirt-daemon-kvm libvirt-devel qemu-kvm tmux vagrant-libvirt vim-enhanced virt-install
+                            virt-manager
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Upgrades!</h2>
+                        <p><strong>rpm-ostree upgrade</strong></p>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ sudo rpm-ostree upgrade
+⠒ Receiving objects: 99% (5991/5992) 2.8 MB/s 283.0 MB
+Receiving objects: 99% (5991/5992) 2.8 MB/s 283.0 MB... done
+Staging deployment... done
+Upgraded:
+  alsa-lib 1.1.7-3.fc29 -> 1.1.8-1.fc29
+  alsa-plugins-pulseaudio 1.1.7-2.fc29 -> 1.1.8-1.fc29
+  alsa-ucm 1.1.7-3.fc29 -> 1.1.8-1.fc29
+  alsa-utils 1.1.7-2.fc29 -> 1.1.8-2.fc29
+  dbxtool 8-7.fc29 -> 8-8.fc29
+  evolution-data-server 3.30.3-1.fc29 -> 3.30.4-1.fc29
+  evolution-data-server-langpacks 3.30.3-1.fc29 -> 3.30.4-1.fc29
+  firefox 64.0-4.fc29 -> 64.0-7.fc29
+  fwupd 1.1.4-1.fc29 -> 1.2.3-1.fc29
+  gnupg2 2.2.11-1.fc29 -> 2.2.12-1.fc29
+  gnupg2-smime 2.2.11-1.fc29 -> 2.2.12-1.fc29
+  krb5-libs 1.16.1-23.fc29 -> 1.16.1-24.fc29
+  libgxps 0.3.0-6.fc29 -> 0.3.1-1.fc29
+  libical 3.0.3-7.fc29 -> 3.0.4-1.fc29
+  libinput 1.12.4-1.fc29 -> 1.12.5-1.fc29
+  libreport-filesystem 2.9.7-1.fc29 -> 2.9.7-2.fc29
+  libxml2 2.9.8-4.fc29 -> 2.9.8-5.fc29
+  openconnect 7.08-10.fc29 -> 8.01-1.fc29
+  pipewire 0.2.5-1.fc29 -> 0.2.5-2.fc29
+  pipewire-libs 0.2.5-1.fc29 -> 0.2.5-2.fc29
+  python3 3.7.1-4.fc29 -> 3.7.2-1.fc29
+  python3-libs 3.7.1-4.fc29 -> 3.7.2-1.fc29
+  python3-libxml2 2.9.8-4.fc29 -> 2.9.8-5.fc29
+  qgnomeplatform 0.5-5.fc29 -> 0.5-6.fc29
+  qt5-qtbase 5.11.1-9.fc29 -> 5.11.3-1.fc29
+  qt5-qtbase-common 5.11.1-9.fc29 -> 5.11.3-1.fc29
+  qt5-qtbase-gui 5.11.1-9.fc29 -> 5.11.3-1.fc29
+  qt5-qtdeclarative 5.11.1-3.fc29 -> 5.11.3-1.fc29
+  qt5-qtxmlpatterns 5.11.1-3.fc29 -> 5.11.3-1.fc29
+  vim-minimal 2:8.1.575-1.fc29 -> 2:8.1.702-1.fc29
+Removed:
+  libmodulemd-1.7.0-1.fc29.x86_64
+Added:
+  compat-openssl10-1:1.0.2o-3.fc29.x86_64
+  gc-7.6.4-4.fc29.x86_64
+  gdbm-1:1.18-1.fc29.x86_64
+  guile-5:2.0.14-12.fc29.x86_64
+  libatomic_ops-7.6.6-1.fc29.x86_64
+  libmodulemd1-1.8.0-1.fc29.x86_64
+  libxmlb-0.1.6-1.fc29.x86_64
+  make-1:4.2.1-10.fc29.x86_64
+  python-unversioned-command-2.7.15-11.fc29.noarch
+  python2-2.7.15-11.fc29.x86_64
+  python2-libs-2.7.15-11.fc29.x86_64
+  python2-pip-18.1-1.fc29.noarch
+  python2-setuptools-40.4.3-1.fc29.noarch
+  tpm2-abrmd-2.0.3-2.fc29.x86_64
+  tpm2-abrmd-selinux-2.0.0-2.fc29.noarch
+  tpm2-tools-3.1.3-2.fc29.x86_64
+  tpm2-tss-2.1.0-1.fc29.x86_64
+Run "systemctl reboot" to start a reboot
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Reboot into the new deployment...</h2>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190105.0 (2019-01-05T01:14:13Z)
+                    Commit: 8bc882c6b40c526b63a0197fe7e0df31149255b9429f224937a7ee6e3415753d
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>What if the upgrade is bad?</h2>
+                        <p><strong>rpm-ostree rollback</strong></p>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190105.0 (2019-01-05T01:14:13Z)
+                    Commit: 8bc882c6b40c526b63a0197fe7e0df31149255b9429f224937a7ee6e3415753d
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+
+$ sudo rpm-ostree rollback
+Moving '8bc882c6b40c526b63a0197fe7e0df31149255b9429f224937a7ee6e3415753d.0' to be first deployment
+Transaction complete; bootconfig swap: yes; deployment count change: 0
+Downgraded:
+  alsa-lib 1.1.8-1.fc29 -> 1.1.7-3.fc29
+  alsa-plugins-pulseaudio 1.1.8-1.fc29 -> 1.1.7-2.fc29
+  alsa-ucm 1.1.8-1.fc29 -> 1.1.7-3.fc29
+  alsa-utils 1.1.8-2.fc29 -> 1.1.7-2.fc29
+  dbxtool 8-8.fc29 -> 8-7.fc29
+  evolution-data-server 3.30.4-1.fc29 -> 3.30.3-1.fc29
+  evolution-data-server-langpacks 3.30.4-1.fc29 -> 3.30.3-1.fc29
+  firefox 64.0-7.fc29 -> 64.0-4.fc29
+  fwupd 1.2.3-1.fc29 -> 1.1.4-1.fc29
+  gnupg2 2.2.12-1.fc29 -> 2.2.11-1.fc29
+  gnupg2-smime 2.2.12-1.fc29 -> 2.2.11-1.fc29
+  krb5-libs 1.16.1-24.fc29 -> 1.16.1-23.fc29
+  libgxps 0.3.1-1.fc29 -> 0.3.0-6.fc29
+  libical 3.0.4-1.fc29 -> 3.0.3-7.fc29
+  libinput 1.12.5-1.fc29 -> 1.12.4-1.fc29
+  libreport-filesystem 2.9.7-2.fc29 -> 2.9.7-1.fc29
+  libxml2 2.9.8-5.fc29 -> 2.9.8-4.fc29
+  openconnect 8.01-1.fc29 -> 7.08-10.fc29
+  pipewire 0.2.5-2.fc29 -> 0.2.5-1.fc29
+  pipewire-libs 0.2.5-2.fc29 -> 0.2.5-1.fc29
+  python3 3.7.2-1.fc29 -> 3.7.1-4.fc29
+  python3-libs 3.7.2-1.fc29 -> 3.7.1-4.fc29
+  python3-libxml2 2.9.8-5.fc29 -> 2.9.8-4.fc29
+  qgnomeplatform 0.5-6.fc29 -> 0.5-5.fc29
+  qt5-qtbase 5.11.3-1.fc29 -> 5.11.1-9.fc29
+  qt5-qtbase-common 5.11.3-1.fc29 -> 5.11.1-9.fc29
+  qt5-qtbase-gui 5.11.3-1.fc29 -> 5.11.1-9.fc29
+  qt5-qtdeclarative 5.11.3-1.fc29 -> 5.11.1-3.fc29
+  qt5-qtxmlpatterns 5.11.3-1.fc29 -> 5.11.1-3.fc29
+  vim-minimal 2:8.1.702-1.fc29 -> 2:8.1.575-1.fc29
+Removed:
+  compat-openssl10-1:1.0.2o-3.fc29.x86_64
+  gc-7.6.4-4.fc29.x86_64
+  gdbm-1:1.18-1.fc29.x86_64
+  guile-5:2.0.14-12.fc29.x86_64
+  libatomic_ops-7.6.6-1.fc29.x86_64
+  libmodulemd1-1.8.0-1.fc29.x86_64
+  libxmlb-0.1.6-1.fc29.x86_64
+  make-1:4.2.1-10.fc29.x86_64
+  python-unversioned-command-2.7.15-11.fc29.noarch
+  python2-2.7.15-11.fc29.x86_64
+  python2-libs-2.7.15-11.fc29.x86_64
+  python2-pip-18.1-1.fc29.noarch
+  python2-setuptools-40.4.3-1.fc29.noarch
+  tpm2-abrmd-2.0.3-2.fc29.x86_64
+  tpm2-abrmd-selinux-2.0.0-2.fc29.noarch
+  tpm2-tools-3.1.3-2.fc29.x86_64
+  tpm2-tss-2.1.0-1.fc29.x86_64
+Added:
+  libmodulemd-1.7.0-1.fc29.x86_64
+Run "systemctl reboot" to start a reboot
+
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190105.0 (2019-01-05T01:14:13Z)
+                    Commit: 8bc882c6b40c526b63a0197fe7e0df31149255b9429f224937a7ee6e3415753d
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Switching major versions</h2>
+                        <p><strong>rpm-ostree rebase</strong></p>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ sudo ostree remote add --set=gpgkeypath=/etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-28-primary silverblue-28 https://kojipkgs.fedoraproject.org/atomic/repo/
+$ sudo rpm-ostree rebase silverblue-28:fedora/28/x86_64/workstation
+⠚ Receiving objects: 99% (50480/50485) 1.4 MB/s 1.3 GB
+Receiving objects: 99% (50480/50485) 1.4 MB/s 1.3 GB... done
+Staging deployment... done
+Upgraded:
+  buildah 1.5-1.gite94b4f9.fc29 -> 1.5-2.gite94b4f9.fc28
+  nss 3.41.0-1.fc29 -> 3.41.0-3.fc28
+  nss-softokn 3.41.0-1.fc29 -> 3.41.0-3.fc28
+...
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+  ostree://silverblue-28:fedora/28/x86_64/workstation
+                   Version: 28.20190111.0 (2019-01-11T02:39:24Z)
+                    Commit: 30d4e5835197933310c9894ff74aed2f66a570273258966d65d0aa755b5641af
+              GPGSignature: Valid signature by 128CF232A9371991C8A65695E08E7E629DB62FB1
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Switching the entire OS?!</h2>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ sudo ostree remote add  --no-gpg-verify centos-atomic-host  http://mirror.centos.org/centos/7/atomic/x86_64/repo
+$ sudo rpm-ostree rebase centos-atomic-host:centos-atomic-host/7/x86_64/standard                                                                                                 [1308/4514]
+⠓ Receiving objects: 99% (16208/16253) 933.5 kB/s 544.2 MB
+Receiving objects: 99% (16208/16253) 933.5 kB/s 544.2 MB... done
+Staging deployment... done
+Upgraded:
+  device-mapper 1.02.154-1.fc29 -> 7:1.02.149-10.el7_6.2
+  device-mapper-event 1.02.154-1.fc29 -> 7:1.02.149-10.el7_6.2
+  device-mapper-event-libs 1.02.154-1.fc29 -> 7:1.02.149-10.el7_6.2
+  device-mapper-libs 1.02.154-1.fc29 -> 7:1.02.149-10.el7_6.2
+...
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+  ostree://centos-atomic-host:centos-atomic-host/7/x86_64/standard
+                   Version: 7.1812 (2019-01-10T22:08:06Z)
+                    Commit: 4b209055c332f3008348b06b06c92e7ab785f4cc2c28aee42fc054711f2c3670
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+                            </code></pre>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Package Layering</h2>
+                        <p>Paradigm is to use containers; package layering is a last resort (IMO)</p>
+                        <p>Also useful for "host extensions" - libvirt, pcsc-lite
+                        <p>Creates a new ostree commit that includes package changes</p>
+                        <p>Able to override base package set with remove/replace</p>
+                        <p>Package layers are tracked with base OS; can be upgraded</p>
+                    </section>
+                    <section>
+                        <h2>Examples!</h2>
+                        <div class="fragment">
+                            <p><strong>rpm-ostree install/uninstall</strong></p>
+                            <pre><code data-trim contenteditable>
+$ sudo rpm-ostree install jq
+Checking out tree ad2a133... done
+Enabled rpm-md repositories: updates fedora
+rpm-md repo 'updates' (cached); generated: 2019-01-12T01:49:26Z
+rpm-md repo 'fedora' (cached); generated: 2018-10-24T22:20:15Z
+Importing rpm-md... done
+Resolving dependencies... done
+Will download: 2 packages (355.6 kB)
+Downloading from 'fedora'... done
+Downloading from 'updates'... done
+Importing packages... done
+Checking out packages... done
+Running pre scripts... done
+Running post scripts... done
+Writing rpmdb... done
+Writing OSTree commit... done
+Staging deployment... done
+Added:
+  jq-1.5-13.fc29.x86_64
+  oniguruma-6.9.1-1.fc29.x86_64
+Run "systemctl reboot" to start a reboot
+
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                BaseCommit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+           LayeredPackages: jq
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+$ jq
+-bash: jq: command not found
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>More Examples!</h2>
+                        <div class="fragment">
+                            <p><strong>rpm-ostree override replace</strong></p>
+                            <pre><code data-trim contenteditable>
+$ sudo rpm-ostree override replace https://kojipkgs.fedoraproject.org//packages/podman/0.10.1.3/4.gitdb08685.fc29/x86_64/podman-0.10.1.3-4.gitdb08685.fc29.x86_64.rpm
+Downloading 'https://kojipkgs.fedoraproject.org//packages/podman/0.10.1.3/4.gitdb08685.fc29/x86_64/podman-0.10.1.3-4.gitdb08685.fc29.x86_64.rpm'... done!
+Checking out tree ad2a133... done
+Enabled rpm-md repositories: updates fedora
+Updating metadata for 'updates'... done
+rpm-md repo 'updates'; generated: 2019-01-12T01:49:26Z
+Updating metadata for 'fedora'... done
+rpm-md repo 'fedora'; generated: 2018-10-24T22:20:15Z
+Importing rpm-md... done
+Resolving dependencies... done
+Applying 1 override
+Processing packages... done
+Running pre scripts... done
+Running post scripts... done
+Writing rpmdb... done
+Writing OSTree commit... done
+Staging deployment... done
+Downgraded:
+  podman 1:0.12.1.2-1.git9551f6b.fc29 -> 1:0.10.1.3-4.gitdb08685.fc29
+Run "systemctl reboot" to start a reboot
+
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+  ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                BaseCommit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+      ReplacedBasePackages: podman 1:0.12.1.2-1.git9551f6b.fc29 -> 1:0.10.1.3-4.gitdb08685.fc29
+
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                    Commit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Another Example!</h2>
+                        <div class="fragment">
+                            <p><strong>rpm-ostree override remove</strong></p>
+                            <pre><code data-trim contenteditable>
+$ rpm -ql virtualbox-guest-additions | grep /usr/bin
+/usr/bin/VBoxClient
+/usr/bin/VBoxClient-all
+/usr/bin/VBoxControl
+
+$ sudo rpm-ostree override remove virtualbox-guest-additions
+Checking out tree ad2a133... done
+Resolving dependencies... done
+Applying 1 override
+Processing packages... done
+Writing rpmdb... done
+Writing OSTree commit... done
+Staging deployment... done
+Removed:
+  virtualbox-guest-additions-5.2.22-1.fc29.x86_64
+Run "systemctl reboot" to start a reboot
+...
+
+$ rpm-ostree status
+State: idle
+AutomaticUpdates: disabled
+Deployments:
+● ostree://fedora-workstation:fedora/29/x86_64/silverblue
+                   Version: 29.20190112.0 (2019-01-12T00:49:46Z)
+                BaseCommit: ad2a133614fb3d72f9e7e11acc8f8a9d246a8112d14d03a455cb094db307f337
+              GPGSignature: Valid signature by 5A03B4DD8254ECA02FDA1637A20AA56B429476B4
+       RemovedBasePackages: virtualbox-guest-additions-5.2.22-1.fc29.x86_64
+...
+
+$ ls -l /usr/bin/VBoxClient
+ls: cannot access '/usr/bin/VBoxClient': No such file or directory
+                            </code></pre>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Containers and Container Tools</h2>
+                        <p>Containers are Linux</p>
+                        <p style="font-size:50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
+                        <p>cgroups, user namespaces, network namespaces...</p>
+                        <p>Popularized via Docker and adoption of microservices</p>
+                        <p>Usually a single process per container (usually...)</p>
+                    </section>
+                    <section>
+                        <h2>Previous Tooling</h2>
+                        <p>Don't say the D-word or you make Dan Walsh weep</p>
+                        <img src="dockah.gif" />
+                        <p class="fragment">Also, stop disabling SELinux - <a href="https://stopdisablingselinux.com/">https://stopdisablingselinux.com/</a></p>
+                    </section>
+                    <section>
+                        <h2>New Hotness!</h2>
+                        <p>A new set of tooling in the form of buildah, podman, skopeo, and fedora-toolbox</p>
+                        <div class="fragment">
+                            <hr />
+                            <p><a href="https://github.com/containers/buildah">Buildah</a> - use it to build your containers images</p>
+                            <p><a href="https://github.com/containers/libpod">Podman</a> - use it to run and manage your containers</p>
+                            <p><a href="https://github.com/containers/skopeo">Skopeo</a> - use it to inspect registries, copy container images</p>
+                            <p><a href="https://github.com/debarshiray/fedora-toolbox/">Fedora Toolbox</a> - use it to create "pet" development containers</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Buildah</h2>
+                        <div class="fragment">
+                            <p>Supports building container images from Dockerfiles</p>
+                            <p>Can mount working container filesystem for manipulation</p>
+                            <p>Supports OCI image format and Docker image format</p>
+                        </div>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ ctr=$(sudo buildah from scratch)
+$ mp=$(sudo buildah mount $ctr)
+$ sudo dnf -y --installroot=$mp --releasever=29 install jq
+...
+$ sudo buildah commit $ctr jq
+$ sudo buildah unmount $ctr
+$ sudo buildah rm $ctr
+
+$ sudo buildah images
+IMAGE NAME                                               IMAGE TAG            IMAGE ID             CREATED AT             SIZE
+localhost/jq                                             latest               17bf11dbaf8a         Jan 13, 2019 14:31     444 MB
+                            </code></pre>
+                    </section>
+                    <section>
+                        <h2>Podman</h2>
+                        <div class="fragment">
+                            <p>Intended as a drop-in replacement for (most of) docker CLI</p>
+                            <p>Supports OCI image format and Docker image format</p>
+                            <p>Doesn't require a daemon running (<a href="https://twitter.com/search?q=%23nobigfatdaemons&f=live">#nobigfatdaemons</a>)</p>
+                            <p>Full management of container life cycle</p>
+                            <p>Can run containers unprivileged (experimental)</p>
+                        </div>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ sudo buildah images
+IMAGE NAME                                               IMAGE TAG            IMAGE ID             CREATED AT             SIZE
+localhost/jq                                             latest               17bf11dbaf8a         Jan 13, 2019 14:31     444 MB
+
+$ sudo podman images
+REPOSITORY     TAG      IMAGE ID       CREATED         SIZE
+localhost/jq   latest   17bf11dbaf8a   9 minutes ago   444 MB
+
+$ rpm-ostree status --json | sudo podman run --rm -i localhost/jq /usr/bin/jq -C .deployments[]?.checksum
+"6792650074abcb68f9f165c2eb63d9a419a01cc619adcd598b83bf93fca1efaa"
+"a83a471e89cb2a292406ca81a3a994d0399453d0f7c7734db0e4185e4f85d28e"
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Skopeo</h2>
+                        <div class="fragment">
+                            <p>Copy an image from and to various storage mechanisms</p>
+                            <p>Delete an image from an image repository</p>
+                            <p>Inspect a remote image showing its properties including its layers</p>
+                        </div>
+                        <div class="fragment">
+                            <pre><code data-trim contenteditable>
+$ skopeo inspect docker://registry.fedoraproject.org/fedora:latest
+{
+    "Name": "registry.fedoraproject.org/fedora",
+    "Digest": "sha256:62a63551532c29d266342c2a36282a094e980a8bb1077be10f3ea72f265cfb16",
+    "RepoTags": [
+        "24",
+        "25",
+        "26-modular",
+        "26",
+        "27-aarch64",
+        "27-armhfp",
+        "27-ppc64le",
+        "27-x86_64",
+        "27",
+        "28-aarch64",
+        "28-armhfp",
+        "28-ppc64le",
+        "28-x86_64",
+        "28",
+        "29-aarch64",
+        "29-ppc64le",
+        "29-s390x",
+        "29-x86_64",
+        "29",
+        "30-aarch64",
+        "30-ppc64le",
+        "30-s390x",
+        "30-x86_64",
+        "30",
+        "latest",
+        "rawhide",
+        "30-armhfp",
+        "29-armhfp"
+    ],
+    "Created": "2019-01-09T06:48:29Z",
+    "DockerVersion": "1.10.1",
+    "Labels": {
+        "license": "MIT",
+        "name": "fedora",
+        "vendor": "Fedora Project",
+        "version": "29"
+    },
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Layers": [
+        "sha256:472dbbf50fa66a103d664a1af893a9b4cd9b06524ddb8fa2d1ae04bb4c405749"
+    ]
+}
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Fedora Toolbox</h2>
+                        <p>Creates a fully mutable container for installing dev tools (or any package)</p>
+                        <p>Runs rootless container (i.e. no 'sudo podman run')</p>
+                        <p>Can be package layered as an RPM or run directly as a script</p>
+                        <p>Automagically mounts in your $HOME directory</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Flatpaks</h2>
+                        <p>Containers for GUI apps<p>
+                        <div class="fragment">
+                            <p>Uses libostree to store runtimes + apps on disk</p>
+                            <p>Uses <a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a> to allow unprivileged users setup + run containers</a>
+                            <p>DBus, systemd, Appstream metadata...</p>
+                            <p>Apps are distributed in the <a href="https://github.com/opencontainers/image-spec">OCI image format</a></p>
+                            <p>Allows for distribution of apps on any flavor of Linux</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>In action...</h2>
+                        <pre><code data-trim content-editable>
+$ flatpak --user remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
+
+$ flatpak --user search spotify
+Application ID                   Version    Branch Remotes Description
+com.spotify.Client               1.0.96.181 stable flathub Online music streaming service
+org.clementine_player.Clementine 1.3.1-git  stable flathub Plays music files and Internet radio
+
+$ flatpak --user install flathub com.spotify.Client
+Required runtime for com.spotify.Client/x86_64/stable (runtime/org.freedesktop.Platform/x86_64/18.08) found in remote flathub
+Do you want to install it? [y/n]: y
+Installing in user:
+org.freedesktop.Platform/x86_64/18.08              flathub 527965a0652d
+org.freedesktop.Platform.Locale/x86_64/18.08       flathub db13dbb8145b
+org.freedesktop.Platform.html5-codecs/x86_64/18.08 flathub 6347e3aa5a5c
+com.spotify.Client/x86_64/stable                   flathub 8f0a500bf0ed
+  permissions: ipc, network, pulseaudio, x11, dri
+  file access: xdg-music:ro, xdg-pictures:ro
+  dbus access: org.freedesktop.Notifications, org.gnome.SessionManager, org.gnome.SettingsDaemon
+  dbus ownership: org.mpris.MediaPlayer2.spotify
+  tags: proprietary
+Is this ok [y/n]: y
+Installing for user: org.freedesktop.Platform/x86_64/18.08 from flathub
+[####################] 776 metadata, 12606 content objects fetched; 268834 KiB transferred in 106 seconds
+Now at 527965a0652d.
+Installing for user: org.freedesktop.Platform.Locale/x86_64/18.08 from flathub
+[####################] 4 metadata, 1 content objects fetched; 16 KiB transferred in 0 seconds
+Now at db13dbb8145b.
+Installing for user: org.freedesktop.Platform.html5-codecs/x86_64/18.08 from flathub
+[####################] 22 metadata, 127 content objects fetched; 2722 KiB transferred in 1 seconds
+Now at 6347e3aa5a5c.
+Installing for user: com.spotify.Client/x86_64/stable from flathub
+[####################] Downloading files: 1024/1024 118.6 MB (3.4 MB/s)
+Now at 8f0a500bf0ed.
+
+$ flatpak --user list
+Ref                                                Options
+com.spotify.Client/x86_64/stable                   user,current
+org.freedesktop.Platform.html5-codecs/x86_64/18.08 user,runtime
+org.freedesktop.Platform/x86_64/18.08              user,runtime
+                        </code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Going Forward</h2>
+                    <p>Still some rough edges to smooth out</p>
+                    <p>Enabling automatic OS upgrades by default</p>
+                    <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
+                    <p>Making Silverblue default Fedora Workstation choice</p>
+                    <p>Improving <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">documentation</a>, growing the <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">community</a></p>
+                </section>
+            </div>
+        </div>
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                transition: 'slide', // none/fade/slide/convex/concave/zoom
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/search/search.js', async: true },
+                    { src: 'plugin/zoom-js/zoom.js', async: true },
+                    { src: 'plugin/notes/notes.js', async: true }
+                ]
+            });
+        </script>
+    </body>
+</html>
