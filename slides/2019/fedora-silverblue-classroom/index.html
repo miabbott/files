@@ -582,12 +582,6 @@ ls: cannot access '/usr/bin/VBoxClient': No such file or directory
                         <p>Usually a single process per container (usually...)</p>
                     </section>
                     <section>
-                        <h2>Previous Tooling</h2>
-                        <p>Don't say the D-word or you make Dan Walsh weep</p>
-                        <img src="dockah.gif" />
-                        <p class="fragment">Also, stop disabling SELinux - <a href="https://stopdisablingselinux.com/">https://stopdisablingselinux.com/</a></p>
-                    </section>
-                    <section>
                         <h2>New Hotness!</h2>
                         <p>A new set of tooling in the form of buildah, podman, skopeo, and fedora-toolbox</p>
                         <div class="fragment">
@@ -708,9 +702,67 @@ $ skopeo inspect docker://registry.fedoraproject.org/fedora:latest
                     <section>
                         <h2>Fedora Toolbox</h2>
                         <p>Creates a fully mutable container for installing dev tools (or any package)</p>
-                        <p>Runs rootless container (i.e. no 'sudo podman run')</p>
+                        <p>Runs rootless container (i.e. no `sudo podman run`)</p>
                         <p>Can be package layered as an RPM or run directly as a script</p>
                         <p>Automagically mounts in your $HOME directory</p>
+                        <div class="fragment">
+                            <pre><code data-trim content-editable>
+[miabbott@mastershake ~ ]$ fedora-toolbox create
+[miabbott@mastershake ~ ]$ fedora-toolbox enter
+[miabbott@toolbox (container) ~ ]$ sudo dnf -y install strace
+...
+Last metadata expiration check: 0:00:01 ago on Thu 07 Feb 2019 03:47:48 AM UTC.
+Dependencies resolved.
+================================================================================
+ Package         Arch            Version                 Repository        Size
+================================================================================
+Installing:
+ strace          x86_64          4.26-1.fc29             updates          956 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 956 k
+Installed size: 2.2 M
+Downloading Packages:
+strace-4.26-1.fc29.x86_64.rpm                   634 kB/s | 956 kB     00:01
+--------------------------------------------------------------------------------
+Total                                           447 kB/s | 956 kB     00:02
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1
+  Installing       : strace-4.26-1.fc29.x86_64                              1/1
+  Running scriptlet: strace-4.26-1.fc29.x86_64                              1/1
+  Verifying        : strace-4.26-1.fc29.x86_64                              1/1
+
+Installed:
+  strace-4.26-1.fc29.x86_64
+
+Complete!
+[miabbott@toolbox (container) ~ ]$ strace -V
+strace -- version 4.26
+Copyright (c) 1991-2018 The strace developers <https://strace.io>.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Optional features enabled: stack-trace=libdw stack-demangle m32-mpers mx32-mpers
+[miabbott@toolbox (container) ~ ]$ exit
+logout
+[miabbott@mastershake ~ ]$
+[miabbott@mastershake ~ ]$ fedora-toolbox enter
+[miabbott@toolbox (container) ~ ]$ strace -V
+strace -- version 4.26
+Copyright (c) 1991-2018 The strace developers <https://strace.io>.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Optional features enabled: stack-trace=libdw stack-demangle m32-mpers mx32-mpers
+                            </code></pre>
+                        </div>
                     </section>
                 </section>
 
@@ -773,12 +825,21 @@ org.freedesktop.Platform/x86_64/18.08              user,runtime
                 </section>
 
                 <section>
-                    <h2>Going Forward</h2>
-                    <p>Still some rough edges to smooth out</p>
-                    <p>Enabling automatic OS upgrades by default</p>
-                    <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
-                    <p>Making Silverblue default Fedora Workstation choice</p>
-                    <p>Improving <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">documentation</a>, growing the <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">community</a></p>
+                    <section>
+                        <h2>Going Forward</h2>
+                        <p>Still some rough edges to smooth out</p>
+                        <p>Enabling automatic OS upgrades by default</p>
+                        <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
+                        <p>Making Silverblue default Fedora Workstation choice</p>
+                        <p>Improving <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">documentation</a>, growing the <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">community</a></p>
+                    </section>
+                    <section>
+                        <p>Forums - <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">https://discussion.fedoraproject.org/c/desktop/silverblue</a></p>
+                        <p>Pagure - <a href="https://pagure.io/teamsilverblue">https://pagure.io/teamsilverblue</a></p>
+                        <p>Twitter - <a href="https://twitter.com/teamsilverblue">@teamsilverblue</a></p>
+                        <h2>THANK YOU</h2>
+                        <p>Micah Abbott - <a href="https://twitter.com/rageear">@rageear</a></p>
+                    </section>
                 </section>
             </div>
         </div>
