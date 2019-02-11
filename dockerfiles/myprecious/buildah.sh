@@ -46,6 +46,14 @@ fi
 sed -i '/tsflags=nodocs/d' "$mp"/etc/dnf/dnf.conf
 dnf -y --installroot "$mp" --releasever "$releasever" --disablerepo=beaker-client --disablerepo=qa-tools reinstall '*'
 
+# install v3.9 origin for UpShift compat
+mkdir -p "$mp/tmp"
+curl -L -o "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz" https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+tar -zxvf "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz" -C "$mp/tmp/"
+cp "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc" "$mp/usr/local/bin/oc"
+chmod +x "$mp/usr/local/bin/oc"
+rm -rf "$mp/tmp"
+
 # install tools needed for building ostree/rpm-ostree stack
 dnf_cmd install @buildsys-build dnf-plugins-core
 dnf_cmd builddep ostree rpm-ostree
@@ -84,7 +92,6 @@ dnf_cmd install \
                    lz4 \
                    jq \
                    man \
-                   origin-clients \
                    podman \
                    python-qpid-messaging \
                    python-saslwrapper \
@@ -120,6 +127,7 @@ umount "$mp/sys"
 
 # clean up
 dnf_cmd clean all
+
 
 # setup sudoers
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> "$mp"/etc/sudoers
