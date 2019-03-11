@@ -21,7 +21,6 @@ registry="docker-registry-default.cloud.registry.upshift.redhat.com"
 
 token="$(cat /home/miabbott/.secrets/upshift-registry-sa.secret)"
 
-
 # create base container
 ctr=$(buildah from registry.fedoraproject.org/fedora:"$releasever")
 
@@ -105,17 +104,12 @@ dnf_cmd install \
                    skopeo \
                    sshpass \
                    sudo \
+                   tig \
                    tmux \
                    vim
 
-
-# clone c-a repo and install deps
-cp /etc/resolv.conf "$mp"/etc/resolv.conf
-chroot "$mp" git clone https://github.com/coreos/coreos-assembler
-chroot "$mp" bash -c "(cd coreos-assembler && ./build.sh configure_yum_repos && ./build.sh install_rpms)"
-chroot "$mp" rm -rf coreos-assembler
-
 # install bat
+cp /etc/resolv.conf "$mp"/etc/resolv.conf
 mount -t proc /proc "$mp"/proc
 mount -t sysfs /sys "$mp"/sys
 chroot "$mp" git clone https://github.com/sharkdp/bat
@@ -128,6 +122,11 @@ umount "$mp/sys"
 # clean up
 dnf_cmd clean all
 
+# get Red Hat certs
+curl -kL -o $mp/etc/pki/ca-trust/source/anchors/Red_Hat_IT_Root_CA.crt https://password.corp.redhat.com/RH-IT-Root-CA.crt
+curl -kL -o $mp/etc/pki/ca-trust/source/anchors/legacy.crt https://password.corp.redhat.com/legacy.crt
+curl -kL -o $mp/etc/pki/ca-trust/source/anchors/Eng-CA.crt https://engineering.redhat.com/Eng-CA.crt
+chroot "$mp" bash -c "update-ca-trust"
 
 # setup sudoers
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> "$mp"/etc/sudoers
