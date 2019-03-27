@@ -111,3 +111,6 @@ if has("autocmd")
         autocmd BufNewFile *.yml 0r ~/.vim/templates/ansible.yml
     augroup END
 endif
+
+"Diff
+set diffopt=vertical
