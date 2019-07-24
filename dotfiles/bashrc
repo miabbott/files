@@ -61,7 +61,7 @@ function rhcos()
 function coreos-assembler() {
     env | grep COREOS_ASSEMBLER
     set -x # so we can see what command gets run
-    sudo chrt --idle 0 podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name coreos-assembler \
+    sudo chrt --idle 0 podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name coreos-assembler --net=host \
                ${COREOS_ASSEMBLER_PRIVILEGED:+--privileged}                                          \
                ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
                ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
@@ -69,10 +69,10 @@ function coreos-assembler() {
                ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
     rc=$?; set +x; return $rc
 }
-export COREOS_ASSEMBLER_GIT=/home/miabbott/workspaces/coreos/coreos-assembler
 
 # prep a dir for building with cosa
-function cosa_prep_dir() {
+function cosa_prep_dir()
+{
     if [ -z "$1" ]; then
         echo "Need to specify directory"
         return 1
@@ -87,6 +87,23 @@ function cosa_prep_dir() {
     sudo chcon system_u:object_r:container_file_t:s0 "${workdir}"
     pushd "${workdir}"
     set +x
+}
+
+# pet container
+function MyPrecious()
+{
+    if [ -z "$1" ]; then
+        echo "Need to specify release version"
+        return 1
+    fi
+
+    sudo chrt --idle 0 podman run --net=host --rm -it --privileged \
+                                  -v $KRB5CCNAME:$KRB5CCNAME:z \
+                                  -v /var/srv:/var/srv \
+                                  -v /var/cache/dnf:/var/cache/dnf \
+                                  -v $HOME:$HOME \
+                                  -v /etc/localtime:/etc/localtime \
+                                  localhost/miabbott/myprecious:$1
 }
 
 ### ENV VARS ###
@@ -136,6 +153,9 @@ export PATH="$PATH:$GOPATH/bin"
 # OpenShift installer
 export AWS_PROFILE=openshift-dev
 
+# force a reasonable TERM
+# helps with vim + tmux + line highlighting
+export TERM=xterm-256color
 
 ### ALIASES
 
@@ -182,13 +202,13 @@ alias ost="ostree --repo=repo"
 alias local-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 alias dev-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 
-# pet container
-alias myprecious="chrt --idle 0 podman run --net=host --rm -it --privileged -v /var/srv:/var/srv -v /var/cache/dnf:/var/cache/dnf -v $HOME:$HOME -v /etc/localtime:/etc/localtime localhost/miabbott/myprecious:29"
-
 # provide alias for jq when not in container
 if [[ "$__in_dockerenv" != yes ]]; then
     alias jq="chrt --idle 0 podman run --rm -i quay.io/miabbott/jq"
 fi
+
+# pet container
+alias myprecious=MyPrecious
 
 ### ERRATA ###
 
