@@ -32,9 +32,17 @@ mp=$(buildah mount "$ctr")
 # set the maintainer label
 buildah config --label maintainer="Micah Abbott <miabbott@redhat.com>" "$ctr"
 
+# install update-ca-trust via ca-certificates
+dnf_cmd install ca-certificates
+
+# get Red Hat certs
+curl -kL -o $mp/etc/pki/ca-trust/source/anchors/Red_Hat_IT_Root_CA.crt https://password.corp.redhat.com/RH-IT-Root-CA.crt
+curl -kL -o $mp/etc/pki/ca-trust/source/anchors/legacy.crt https://password.corp.redhat.com/legacy.crt
+curl -kL -o $mp/etc/pki/ca-trust/source/anchors/Eng-CA.crt https://engineering.redhat.com/Eng-CA.crt
+chroot "$mp" bash -c "update-ca-trust"
+
 # setup yum repos
-curl -L -o "$mp"/etc/yum.repos.d/beaker-client.repo http://download-node-02.eng.bos.redhat.com/beakerrepos/beaker-client-Fedora.repo
-curl -L -o "$mp"/etc/yum.repos.d/qa-tools.repo http://liver.brq.redhat.com/repo/qa-tools.repo
+curl -L -o "$mp"/etc/yum.repos.d/rcm-tools-fedora.repo https://download.devel.redhat.com/rel-eng/RCMTOOLS/rcm-tools-fedora.repo
 
 # coreutils-single conflicts with coreutils so have to swap?
 if [ "$releasever" == "29" ]; then
@@ -53,18 +61,21 @@ cp "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc" "$mp/us
 chmod +x "$mp/usr/local/bin/oc"
 rm -rf "$mp/tmp"
 
+
 # install tools needed for building ostree/rpm-ostree stack
-dnf_cmd install @buildsys-build dnf-plugins-core
+if [ "$releasever" == "30" ]; then
+  dnf_cmd install --excludepkg fedora-release @buildsys-build dnf-plugins-core
+else
+  dnf_cmd install @buildsys-build dnf-plugins-core
+fi
 dnf_cmd builddep ostree rpm-ostree
 
 # install the rest
 dnf_cmd install \
                    awscli \
-                   beaker-client \
-                   beaker-redhat \
                    bind-utils \
+                   brewkoji \
                    btrfs-progs-devel\
-                   conmon \
                    conserver-client \
                    createrepo_c \
                    cyrus-sasl-gssapi \
@@ -90,14 +101,16 @@ dnf_cmd install \
                    libvirt-devel \
                    lz4 \
                    jq \
+                   koji \
+                   krb5-workstation \
                    man \
                    podman \
                    python-qpid-messaging \
                    python-saslwrapper \
                    python2-virtualenv \
                    python3-virtualenv \
-                   qa-tools-workstation \
                    redhat-rpm-config \
+                   rhpkg \
                    rpm-ostree \
                    rsync \
                    ShellCheck \
@@ -122,11 +135,6 @@ umount "$mp/sys"
 # clean up
 dnf_cmd clean all
 
-# get Red Hat certs
-curl -kL -o $mp/etc/pki/ca-trust/source/anchors/Red_Hat_IT_Root_CA.crt https://password.corp.redhat.com/RH-IT-Root-CA.crt
-curl -kL -o $mp/etc/pki/ca-trust/source/anchors/legacy.crt https://password.corp.redhat.com/legacy.crt
-curl -kL -o $mp/etc/pki/ca-trust/source/anchors/Eng-CA.crt https://engineering.redhat.com/Eng-CA.crt
-chroot "$mp" bash -c "update-ca-trust"
 
 # setup sudoers
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> "$mp"/etc/sudoers
