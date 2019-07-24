@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora:28
+FROM registry.fedoraproject.org/fedora:30
 LABEL maintainer="Micah Abbott <miabbott@redhat.com>"
 RUN dnf -y install htop && \
     dnf clean all
