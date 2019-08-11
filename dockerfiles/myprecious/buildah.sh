@@ -53,14 +53,15 @@ fi
 sed -i '/tsflags=nodocs/d' "$mp"/etc/dnf/dnf.conf
 dnf -y --installroot "$mp" --releasever "$releasever" --disablerepo=beaker-client --disablerepo=qa-tools reinstall '*'
 
-# install v3.9 origin for UpShift compat
-mkdir -p "$mp/tmp"
-curl -L -o "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz" https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
-tar -zxvf "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz" -C "$mp/tmp/"
-cp "$mp/tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc" "$mp/usr/local/bin/oc"
+# OCP4 or die, yo
+OC_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
+OC_TARGZ="${OC_URL:(-9)}"
+tmpdir=$(mktemp -d)
+curl -L -o "${tmpdir}/${OC_TARGZ}" "${OC_URL}"
+tar -zxvf "${tmpdir}/${OC_TARGZ}" -C "${tmpdir}"
+cp "${tmpdir}/oc" "$mp/usr/local/bin/oc"
 chmod +x "$mp/usr/local/bin/oc"
-rm -rf "$mp/tmp"
-
+rm -rf "${tmpdir}"
 
 # install tools needed for building ostree/rpm-ostree stack
 if [ "$releasever" == "30" ]; then
@@ -96,6 +97,7 @@ dnf_cmd install \
                    iputils \
                    libassuan-devel \
                    libgpg-error-devel \
+                   libguestfs-tools \
                    libseccomp-devel \
                    libselinux-devel \
                    libvirt-devel \
@@ -108,6 +110,7 @@ dnf_cmd install \
                    python-qpid-messaging \
                    python-saslwrapper \
                    python2-virtualenv \
+                   python3-pylint \
                    python3-virtualenv \
                    redhat-rpm-config \
                    rhpkg \
@@ -122,19 +125,18 @@ dnf_cmd install \
                    vim
 
 # install bat
-cp /etc/resolv.conf "$mp"/etc/resolv.conf
-mount -t proc /proc "$mp"/proc
-mount -t sysfs /sys "$mp"/sys
-chroot "$mp" git clone https://github.com/sharkdp/bat
-chroot "$mp" bash -c "(cd bat && /usr/bin/cargo install --root /usr/local bat && /usr/bin/cargo clean)"
-chroot "$mp" bash -c "(mv /usr/bin/cat /usr/bin/cat.old && ln -s /usr/local/bin/bat /usr/bin/cat)"
-chroot "$mp" bash -c "rm -rf bat"
-umount "$mp/proc"
-umount "$mp/sys"
+#cp /etc/resolv.conf "$mp"/etc/resolv.conf
+#mount -t proc /proc "$mp"/proc
+#mount -t sysfs /sys "$mp"/sys
+#chroot "$mp" git clone https://github.com/sharkdp/bat
+#chroot "$mp" bash -c "(cd bat && /usr/bin/cargo install --root /usr/local bat && /usr/bin/cargo clean)"
+#chroot "$mp" bash -c "(mv /usr/bin/cat /usr/bin/cat.old && ln -s /usr/local/bin/bat /usr/bin/cat)"
+#chroot "$mp" bash -c "rm -rf bat"
+#umount "$mp/proc"
+#umount "$mp/sys"
 
 # clean up
 dnf_cmd clean all
-
 
 # setup sudoers
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> "$mp"/etc/sudoers
