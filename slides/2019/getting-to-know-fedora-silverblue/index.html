@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>Getting to Know Fedora Silverblue</title>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/league.css" id="theme">
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <section>
+                        <h2>Getting to Know Fedora Silverblue</h2>
+                        <a href="https://silverblue.fedoraproject.org"><img height="350" width="350" src="silverblue-logo.svg" style="border: 0; border-style: none; box-shadow: none;"/></a>
+                        <p>DevConf.us 2019</p>
+                        <p style="font-size: smaller;">Micah Abbott - <a href="https://twitter.com/rageear">@rageear</a></p>
+                        <p style="font-size: smaller;">Principal Quality Engineer - Red Hat</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>What is Fedora Silverblue?</h2>
+                        <p>Fedora Silverblue is...</p>
+                        <p class="fragment">Fedora</p>
+                        <p class="fragment">RPMs (delivered via ostree)</p>
+                        <p class="fragment">Containers</p>
+                        <p class="fragment">Flatpaks</p>
+                        <p class="fragment">An immutable host</p>
+                        <p class="fragment">The Future?</p>
+                    </section>
+                    <section>
+                        <h2>Immutable Host?</h2>
+                        <p><em>See also: immutable infrastructure</em></p>
+                        <p>An immutable host is where the OS is delivered in such a way where OS modification is not expected*</p>
+                        <div class="fragment">
+                            <p>Allows for hosts to become disposable (i.e. <a href="https://youtu.be/w99SWWfad4M?t=1665">cattle/elephants</a>)</p>
+                            <p>Provides a foundation for repeatable deployments (i.e. <a href="https://martinfowler.com/bliki/PhoenixServer.html">phoenix servers</a>)<p>
+                            <p>Typically delivered as image (or image-like artifact)<p>
+                        <div class="fragment">
+                            <h3>Previous examples:</h3>
+                            <ul>
+                                <li><a href="https://projectatomic.io">CentOS/Fedora/Red Hat Atomic Host</a></li>
+                                <li><a href="https://coreos.com/why/">Container Linux</a> (Gentoo-based)</li>
+                                <li><a href="https://coreos.com/why/">Endless OS</a> (Debian-based)</li>
+                            </ul>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Comparing Silverblue to Fedora Workstation</h2>
+                        <p>Both share the following:</p>
+                        <div class="fragment">
+                            <p>RPMs from the Fedora ecosystem</p>
+                            <p>Support package installation (although differently)<p>
+                            <p>Can run containers and Flatpaks<p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Filesystem Mutability</h2>
+                        <p class="fragment">Only /var and /etc are writeable on Silverblue</p>
+                        <div class="fragment">
+                            <img src="nvidia-rm-rf-usr.png" style="border: 0; border-style: none; box-shadow: none;" />
+                            <p style="font-size: 50%;">Image credit: <a href="https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123">https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123</a></p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Upgrade Mechanisms</h2>
+                        <div class="fragment" style="font-size: smaller;">
+                            <p>Silverblue uses atomic, transactional updates</p>
+                            <p>Running system is not touched during updates (thank you <strong>bubblewrap</strong>)</p>
+                            <p>You can pull the plug on a Silverblue host during an upgrade</p>
+                            <p>Tradeoff: reboot to get into upgraded OS</p>
+                        </div>
+                        <div class="fragment">
+                            <img src="x-crash-systemd-udev.png" style="border: 0; border-style: none; box-shadow: none;" /></p>
+                            <p style="font-size: 50%;">Image credit: <a href="https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/">https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/</a></p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Delivery Mechanisms</h2>
+                        <div class="fragment">
+                            <p>Workstation delivered as traditional RPMs</p>
+                            <p>Silverblue has OS delivered as OSTree commit</p>
+                            <p>Although both can install packages as RPMs</p>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>What is ostree + rpm-ostree?</h2>
+                        <p style="font-size: smaller;"><a href="https://github.com/ostreedev/ostree">(lib)ostree</a> can be simplified as "git for operating systems"</p>
+                        <p style="font-size: smaller;">Files are checksummed + tracked via content-addressed object store</p>
+                        <p style="font-size: smaller;">Files are de-duplicated via hardlinks</p>
+                        <p style="font-size: smaller;">Can handle bootloader configuration, management of /etc</p>
+                        <div class="fragment">
+                            <pre><code  data-trim contenteditable>
+$ ostree --repo=/var/srv/repo init --mode=archive
+$ mkdir /tmp/tree && cd /tmp/tree
+$ echo "foo" > 1
+$ echo "bar" > 2
+$ mkdir subdir
+$ cp /usr/share/dict/words subdir/words
+
+$ ostree commit --repo=/var/srv/repo --branch=master --subject="initial commit"
+9e18627134f378b4e433a9a8fee429b875b26d41e236672f1f58366492691a6d
+
+$ cd $(mktemp -d)
+$ ostree --repo=/var/srv/repo checkout master
+$ ls -l master/
+total 8
+-rw-rw-r--. 2 miabbott miabbott  4 Dec 31  1969 1
+-rw-rw-r--. 2 miabbott miabbott  4 Dec 31  1969 2
+drwxrwxr-x. 2 miabbott miabbott 60 Dec 31  1969 subdir
+                            </code></pre>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Quoting the rpm-ostree documentation...</h2>
+                        <p><a href="https://github.com/projecatomic/rpm-ostree">rpm-ostree</a> is a hybrid image/package system</p>
+                        <p>Uses <strong>libostree</strong> as the base image format</p>
+                        <p>Accepts RPMs on the server side for composes and on the client side for package layering using libdnf</p>
+                        <p>Primary entrypoint for managing your Silverblue OS</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Managing the OS</h2>
+                        <p>Getting status of the OS deployments: <strong>rpm-ostree status</strong></p>
+                        <div class="fragment">
+                            <p>Status of the daemon</p>
+                            <p>Status of automatic upgrade configuration</p>
+                            <p>Deployment information:  refspec, version, commit, GPG signatures, layered packages...</p>
+                            <p>Can report security advisories fixed in a new version</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Upgrades!</h2>
+                        <p>As simple as <strong>rpm-ostree upgrade</strong></p>
+                        <div class="fragment">
+                            <p>Retrieves new commit object and file objects</p>
+                            <p>New commits can be delivered as static deltas</p>
+                            <p>Can combine package layering operations with upgrades</p>
+                            <p>Package changes are reported after retrieval</p>
+                            <p>Running system is left unchanged; using new deployment requires reboot</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>What if the upgrade is bad?</h2>
+                        <p>Just <strong>rpm-ostree rollback</strong></p>
+                        <div class="fragment">
+                            <p>Switches the bootloader to point to the previous deployment</p>
+                            <p>Running system is left untouched</p>
+                            <p>Can combine package layering operations with the rollback</p>
+                            <p>Emergency escape hatch via the grub menu</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Switching major versions</h2>
+                        <p><strong>rpm-ostree rebase</strong></p>
+                        <div class="fragment">
+                            <p>Similar mechanics to upgrade + rollback</p>
+                            <p>Allows you to test out upcoming releases via Rawhide</p>
+                            <p>Can test/reproduce issues on older versions</p>
+                            <p>Could also change the entire OS (i.e. from Fedora to CentOS)</p>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Package Layering</h2>
+                        <p>Preffered paradigm is to use containers; package layering is a last resort (IMO)</p>
+                        <p>Also useful for "host extensions" - libvirt, pcsc-lite</p>
+                        <p>Creates a new ostree commit that includes package changes</p>
+                        <p>Able to override base package set with remove/replace</p>
+                        <p>Package layers are tracked with base OS; can be upgraded</p>
+                        <div class="fragment">
+                            <p><strong>rpm-ostree install/uninstall</strong> - for extending the OS</p>
+                            <p><strong>rpm-ostree override replace</strong> - for changing a package in the base OS</p>
+                            <p><strong>rpm-ostree override remove</strong> - for removing a package from the base OS</p>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Containers and Container Tools</h2>
+                        <p>Containers are Linux</p>
+                        <p style="font-size:50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
+                        <p>cgroups, user namespaces, network namespaces...</p>
+                        <p>Usually a single process per container (usually...)</p>
+                        <p>Popularized via Docker and adoption of microservices</p>
+                    </section>
+                    <section>
+                        <h2>New(-ish) Hotness!</h2>
+                        <p>A new set of tooling in the form of buildah, podman, skopeo, and toolbox</p>
+                        <div class="fragment">
+                            <hr />
+                            <p><a href="https://github.com/containers/buildah">Buildah</a> - use it to build your containers images</p>
+                            <p><a href="https://github.com/containers/libpod">Podman</a> - use it to run and manage your containers</p>
+                            <p><a href="https://github.com/containers/skopeo">Skopeo</a> - use it to inspect registries, copy container images</p>
+                            <p><a href="https://github.com/debarshiray/toolbox/">Toolbox</a> - use it to create "pet" development containers</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Buildah</h2>
+                        <div class="fragment">
+                            <p>Supports building container images from Dockerfiles</p>
+                            <p>Can mount working container filesystem for manipulation</p>
+                            <p>Supports OCI image format and Docker image format</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Podman</h2>
+                        <div class="fragment">
+                            <p>Intended as a drop-in replacement for (most of) docker CLI</p>
+                            <p>Supports OCI image format and Docker image format</p>
+                            <p>Doesn't require a daemon running (<a href="https://twitter.com/search?q=%23nobigfatdaemons&f=live">#nobigfatdaemons</a>)</p>
+                            <p>Full management of container life cycle</p>
+                            <p>Can run containers unprivileged (experimental)</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Skopeo</h2>
+                        <div class="fragment">
+                            <p>Copy an image from and to various storage mechanisms</p>
+                            <p>Delete an image from an image repository</p>
+                            <p>Inspect a remote image showing its properties including its layers</p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Fedora Toolbox</h2>
+                        <p>Creates a fully mutable container for installing dev tools (or any package)</p>
+                        <p>Runs rootless container (i.e. no 'sudo podman run')</p>
+                        <p>Automagically mounts in your $HOME directory</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Flatpaks</h2>
+                        <p>Containers for GUI apps<p>
+                        <div class="fragment">
+                            <p>Uses libostree to store runtimes + apps on disk</p>
+                            <p>Uses <a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a> to allow unprivileged users setup + run containers</a>
+                            <p>DBus, systemd, Appstream metadata...</p>
+                            <p>Apps are distributed in the <a href="https://github.com/opencontainers/image-spec">OCI image format</a></p>
+                            <p>Allows for distribution of apps on any flavor of Linux</p>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Recent Developments</h2>
+                    <p>Support for <a href="https://github.com/projectatomic/rpm-ostree/pull/1795">installing (some) packages to /opt</a>; namely Google Chrome</p>
+                    <p>Support for <a href="https://blogs.gnome.org/alexl/2019/03/06/nvidia-drivers-in-fedora-silverblue/">Nvidia drivers (akmods)</a></p>
+                    <p>Shoutout to <a href="https://twitter.com/gnomealex">Alex Larssaon</a> for both of those features!</p>
+                    <div class="fragment">
+                        <h2>Going Forward</h2>
+                        <p>Still some rough edges to smooth out</p>
+                        <p>Enabling automatic OS upgrades by default</p>
+                        <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
+                        <p>Making Silverblue default Fedora Workstation choice?</p>
+                        <p>Improving documentation, growing the community</p>
+                    </div>
+                </section>
+                <section>
+                    <h2>Get Involved!</h2>
+                    <p>Community Discourse - <a href="https://discussion.fedoraproject.org/c/desktop/silverblue">https://discussion.fedoraproject.org/c/desktop/silverblue</a></p>
+                    <p>Documentation - <a href="https://docs.fedoraproject.org/en-US/fedora-silverblue/">https://docs.fedoraproject.org/en-US/fedora-silverblue/</a></p>
+                    <p>Issue Tracker - <a href="https://github.com/fedora-silverblue/issue-tracker">https://github.com/fedora-silverblue/issue-tracker</a></p>
+                    <p>Twitter - <a href="https://twitter.com/teamsilverblue">https://twitter.com/teamsilverblue</a></p>
+                    <h2>Contact Me!</h2>
+                    <p>Twitter - <a href="https://twitter.com/rageear">https://twitter.com/rageear</a></p>
+                    <p><a href="https://github.com/miabbott/files/slides/2019/getting-to-know-fedora-silverblue">Slides</a></p>
+            </div>
+        </div>
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                transition: 'slide', // none/fade/slide/convex/concave/zoom
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/search/search.js', async: true },
+                    { src: 'plugin/zoom-js/zoom.js', async: true },
+                    { src: 'plugin/notes/notes.js', async: true }
+                ]
+            });
+        </script>
+    </body>
+</html>
