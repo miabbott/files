@@ -3,16 +3,16 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        
+
         <title>Getting to Know Fedora Silverblue</title>
 
         <link rel="sytlesheet" href="css/reset.css">
         <link rel="stylesheet" href="css/reveal.css">
         <link rel="stylesheet" href="css/theme/black.css">
-		
+
         <!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
-        
+        <link rel="stylesheet" href="lib/css/monokai.css">
+
         <!-- Printing and PDF exports -->
         <script>
             var link = document.createElement( 'link' );
@@ -55,11 +55,11 @@
                         <p>"An immutable host is where the OS is delivered in such a way where OS modification is not expected*"</p>
                         <p class="fragment" style="font-size: 50%">- me, <del>probably</del> definitely</p>
                         <div class="fragment">
-                            <hr style="width: 80%;"/>
+                            <hr style="width: 80%"/>
                             <p>Allows for hosts to become disposable (i.e. <a href="https://youtu.be/w99SWWfad4M?t=1665">cattle/elephants</a>)</p>
                             <p>Provides a foundation for repeatable deployments (i.e. <a href="https://martinfowler.com/bliki/PhoenixServer.html">phoenix servers</a>)<p>
                             <p>Typically delivered as image (or image-like artifact)<p>
-                        <div class="fragment">
+                        <div class="fragment" style="font-size: 80%">
                             <h3>Previous examples:</h3>
                             <ul>
                                 <li><a href="https://projectatomic.io">CentOS/Fedora/Red Hat Atomic Host</a></li>
@@ -85,12 +85,12 @@
                         <p class="fragment">Only /var and /etc are writeable on Silverblue</p>
                         <div class="fragment">
                             <img src="nvidia-rm-rf-usr.png" style="border: 0; border-style: none; box-shadow: none;" />
-                            <p style="font-size: 50%;">Image credit: <a href="https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123">https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123</a></p>
+                            <p style="font-size: 50%">Image credit: <a href="https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123">https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123</a></p>
                         </div>
                     </section>
                     <section>
                         <h2>Different Upgrade Mechanisms</h2>
-                        <div class="fragment" style="font-size: smaller;">
+                        <div class="fragment" style="font-size: smaller">
                             <p>Silverblue uses atomic, transactional updates</p>
                             <p>Running system is not touched during updates (thank you <strong><a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a></strong>)</p>
                             <p>You can pull the plug on a Silverblue host during an upgrade</p>
@@ -98,7 +98,7 @@
                         </div>
                         <div class="fragment">
                             <img src="x-crash-systemd-udev.png" style="border: 0; border-style: none; box-shadow: none;" /></p>
-                            <p style="font-size: 50%;">Image credit: <a href="https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/">https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/</a></p>
+                            <p style="font-size: 50%">Image credit: <a href="https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/">https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/</a></p>
                         </div>
                     </section>
                     <section>
@@ -114,10 +114,10 @@
                 <section>
                     <section>
                         <h2>What is ostree + rpm-ostree?</h2>
-                        <p style="font-size: smaller;"><a href="https://github.com/ostreedev/ostree">(lib)ostree</a> can be simplified as "git for operating systems"</p>
-                        <p style="font-size: smaller;">Files are checksummed + tracked via content-addressed object store</p>
-                        <p style="font-size: smaller;">Files are de-duplicated via hardlinks</p>
-                        <p style="font-size: smaller;">Can handle bootloader configuration, management of /etc</p>
+                        <p style="font-size: smaller"><a href="https://github.com/ostreedev/ostree">(lib)ostree</a> can be simplified as "git for operating systems"</p>
+                        <p style="font-size: smaller">Files are checksummed + tracked via content-addressed object store</p>
+                        <p style="font-size: smaller">Files are de-duplicated via hardlinks</p>
+                        <p style="font-size: smaller">Can handle bootloader configuration, management of /etc</p>
                     </section>
                     <section>
                         <h2>Quoting the rpm-ostree documentation...</h2>
@@ -133,6 +133,7 @@
                         <h2>Managing the OS</h2>
                         <p>Getting status of the OS deployments: <strong>rpm-ostree status</strong></p>
                         <div class="fragment">
+                            <hr style="width: 80%" />
                             <p>Status of the daemon</p>
                             <p>Status of automatic upgrade configuration</p>
                             <p>Deployment information:  refspec, version, commit, GPG signatures, layered packages...</p>
@@ -143,8 +144,8 @@
                         <h2>Upgrades!</h2>
                         <p>As simple as <strong>rpm-ostree upgrade</strong></p>
                         <div class="fragment">
+                            <hr style="width: 80%" />
                             <p>Retrieves new commit object and file objects</p>
-                            <p>New commits can be delivered as static deltas</p>
                             <p>Can combine package layering operations with upgrades</p>
                             <p>Package changes are reported after retrieval</p>
                             <p>Running system is left unchanged; using new deployment requires reboot</p>
@@ -154,6 +155,7 @@
                         <h2>What if the upgrade is bad?</h2>
                         <p>Just <strong>rpm-ostree rollback</strong></p>
                         <div class="fragment">
+                            <hr style="width: 80%" />
                             <p>Switches the bootloader to point to the previous deployment</p>
                             <p>Running system is left untouched (requires reboot)</p>
                             <p>Can combine package layering operations with the rollback</p>
@@ -164,6 +166,7 @@
                         <h2>Switching major versions</h2>
                         <p><strong>rpm-ostree rebase</strong></p>
                         <div class="fragment">
+                            <hr style="width: 80%" />
                             <p>Similar mechanics to upgrade + rollback</p>
                             <p>Allows you to test out upcoming releases via Rawhide</p>
                             <p>Can test/reproduce issues on older versions</p>
@@ -193,7 +196,7 @@
                     <section>
                         <h2>Containers and Container Tools</h2>
                         <p>Containers are Linux</p>
-                        <p style="font-size:50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
+                        <p style="font-size: 50%">Except for FreeBSD jails and Solaris zones...shhhhh</p>
                         <p>cgroups, user namespaces, network namespaces...</p>
                         <p>Usually a single process per container (usually...)</p>
                         <p>Popularized via Docker and adoption of microservices</p>
@@ -289,7 +292,7 @@
                     <p><img src="tedtalk.jpg" style="border: 0; border-style: none; box-shadow: none;" /></p>
                     <h2>Contact Me!</h2>
                     <p>Twitter - <a href="https://twitter.com/rageear">https://twitter.com/rageear</a></p>
-                    <p><a href="https://github.com/miabbott/files/slides/2019/getting-to-know-fedora-silverblue">Slides</a></p>
+                    <p>Email - <a href="mailto:miabbott@redhat.com">miabbott@redhat.com</a></p>
                 </section>
             </div>
         </div>
