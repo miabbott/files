@@ -106,6 +106,7 @@ dnf_cmd install \
                    koji \
                    krb5-workstation \
                    man \
+                   openldap-clients \
                    podman \
                    python-qpid-messaging \
                    python-saslwrapper \
