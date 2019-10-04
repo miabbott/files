@@ -123,7 +123,11 @@ dnf_cmd install \
                    sudo \
                    tig \
                    tmux \
+                   tree \
                    vim
+
+# install keybase
+dnf_cmd install https://prerelease.keybase.io/keybase_amd64.rpm
 
 # install bat
 #cp /etc/resolv.conf "$mp"/etc/resolv.conf
