@@ -75,12 +75,12 @@
                         <h2>Immutable Host?</h2>
                             <p><em>See also: immutable infrastructure</em></p>
                             <p>"An immutable host is where the OS is delivered in such a way where OS modification is not expected*"</p>
-                            <p class="fragment" style="font-size: 50%">- me, <del>probably</del> definitely</p>
+                            <p style="font-size: 50%">- me, <del>probably</del> definitely</p>
                         <div class="fragment">
                             <hr style="width: 80%"/>
+                            <p>Typically delivered as image (or image-like artifact)<p>
                             <p>Allows for hosts to become disposable (i.e. <a href="https://youtu.be/w99SWWfad4M?t=1665">ants vs. elephants</a>)</p>
                             <p>Provides a foundation for repeatable deployments (i.e. <a href="https://martinfowler.com/bliki/PhoenixServer.html">phoenix servers</a>)<p>
-                            <p>Typically delivered as image (or image-like artifact)<p>
                         </div>
                     </section>
                     <section>
@@ -130,7 +130,7 @@
                     <section>
                         <h2>Fedora/Red Hat Atomic Host</h2>
                         <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="icons/projectatomic.png" /></p>
-                        <p>RPM-based</p>
+                        <p>Built from RPMs</p>
                         <p>Immutable root filesystem</p>
                         <p>Updates delivered via ostree/rpm-ostree</p>
                         <p>Atomic, transactional updates/rollbacks</p>
@@ -147,12 +147,12 @@
 
                 <section>
                     <section>
-                        <h2>CoreOS Technology Pillars</h2>
+                        <h2>Fedora CoreOS Technology Pillars</h2>
                         <p><a href="https://gitub.com/ostreedev/ostree">ostree</a>/<a href="https://github.com/coreos/rpm-ostree">rpm-ostree</a> - managing OS contents</p>
                         <p><a href="https://github.com/coreos/ignition">Ignition</a> - declaratively configure system</p>
                         <p><a href="https://github.com/containers/libpod">podman</a> - build, run, manage containers</p>
                         <p><a href="https://github.com/coreos/zincati">zincati</a> - update agent</p>
-                        <p><a href="https://github.com/coreos/coreos-assembler">coreos-assembler</a> - build CoreOS-style systems</p>
+                        <p><a href="https://github.com/coreos/coreos-assembler">coreos-assembler</a> - build Fedora CoreOS-style systems</p>
                     </section>
                     <section>
                         <h2>What is ostree + rpm-ostree?</h2>
@@ -166,7 +166,7 @@
                         <p><a href="https://github.com/projecatomic/rpm-ostree">rpm-ostree</a> is a hybrid image/package system</p>
                         <p>Uses <strong>libostree</strong> as the base image format</p>
                         <p>Accepts RPMs on the server side for composes and on the client side for package layering using <a href="https://github.com/rpm-software-management/libdnf">libdnf</a></p>
-                        <p>Primary entrypoint for managing your CoreOS-style system</p>
+                        <p>Primary entrypoint for managing your Fedora CoreOS-style system</p>
                     </section>
                     <section>
                         <h2>Ignition</h2>
@@ -233,7 +233,7 @@
                         <div class="fragment" style="font-size: smaller">
                             <p>Silverblue uses atomic, transactional updates</p>
                             <p>Running system is not touched during updates (thank you <strong><a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a></strong>)</p>
-                            <p>You can pull the plug on a Silverblue (and CoreOS) host during an upgrade</p>
+                            <p>You can pull the plug on a Silverblue (and Fedora CoreOS) host during an upgrade</p>
                             <p>Tradeoff: reboot to get into upgraded OS</p>
                         </div>
                         <div class="fragment">
@@ -260,7 +260,7 @@
                         <h2>Going Forward</h2>
                         <p>Enabling automatic OS upgrades by default</p>
                         <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
-                        <p>Making Silverblue default Fedora Workstation choice?</p>
+                        <p>Derive Silverblue config from Fedora CoreOS</p>
                         <p>Building Silverblue via <a href="https://github.com/coreos/coreos-assembler">coreos-assembler</a></p>
                         <p>Improving documentation, growing the community</p>
                     </div>
@@ -284,9 +284,9 @@
                 <section>
                     <h2>Get Involved!</h2>
                     <p>Community Discourse - <a href="https://discussion.fedoraproject.org/">https://discussion.fedoraproject.org/</a></p>
-                    <p>CoreOS Issue Tracker - <a href="https://github.com/coreos/fedora-coreos-tracker">https://github.com/coreos/fedora-coreos-tracker</a></p>
-                    <p>Silverblue Issue Tracker - <a href="https://github.com/fedora-silverblue/issue-tracker">https://github.com/fedora-silverblue/issue-tracker</a></p>
-                    <p>Silverblue Twitter - <a href="https://twitter.com/teamsilverblue">https://twitter.com/teamsilverblue</a></p>
+                    <p>Fedora CoreOS Issue Tracker - <a href="https://github.com/coreos/fedora-coreos-tracker">https://github.com/coreos/fedora-coreos-tracker</a></p>
+                    <p>Fedora Silverblue Issue Tracker - <a href="https://github.com/fedora-silverblue/issue-tracker">https://github.com/fedora-silverblue/issue-tracker</a></p>
+                    <p>Fedora Silverblue Twitter - <a href="https://twitter.com/teamsilverblue">https://twitter.com/teamsilverblue</a></p>
                 </section>
 
                 <section>
