@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Immutable Hosts for Server and Home</title>
+
+        <link rel="sytlesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/monokai.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <section>
+                        <h2>Immutable Hosts for Server and Home</h2>
+                        <a href="https://getfedora.org/coreos"><img height="350" width="350" style="border: 0; border-style: none; box-shadow: none;" src="../icons/coreos.png"/></a><a href="https://silverblue.fedoraproject.org"><img height="350" width="350" src="silverblue-logo.svg" style="border: 0; border-style: none; box-shadow: none;"/></a>
+                        <p>Norwalk IO</p>
+                        <p style="font-size: smaller;">Micah Abbott - <a href="https://twitter.com/rageear">@rageear</a></p>
+                        <p style="font-size: smaller;">Principal Quality Engineer - Red Hat</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Relative Stone Age (late 1990 - early 2000)</h2>
+                            <div class="fragment">
+                                <p style="font-size: 300%; vertical-align: middle;"><img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/solaris.png" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/apache-logo.png" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/mysql.png" /></p>
+                                <p><img height="350" width="350" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/sun-ultra-enterprise-450.jpg" /></p>
+                            </div>
+                            <p class="fragment">Scaling up == more hardware == more money == wasted resources</p>
+                    </section>
+                    <section>
+                        <h2>Relative Industrial Age (mid - late 2000)</h2>
+                            <div class="fragment">
+                                <p style="font-size: 300%; vertical-align: middle;"><img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/linux.jpg" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/apache-logo.png" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/mysql.png" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/php.png" /></p>
+                                <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/vmware.jpg" /></p>
+                            </div>
+                            <p class="fragment">Scaling up == more VMs == less money == less wasted resources</p>
+                    </section>
+                    <section>
+                        <h2>Workloads in the Relative Future (now!)</h2>
+                            <div class="fragment">
+                                <p style="font-size: 300%; vertical-align: middle;"><img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/linux.jpg" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/nginx.png" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/mysql.png" /> + <img height="200" width="200" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/php.png" /></p>
+                                <p><img height="250" width="375" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/docker.png" /></p>
+                            </div>
+                            <p class="fragment">Scalling up == more containers == even less money == even less wasted resources</p>
+                    </section>
+                    <section>
+                        <h2>Why Containers?</h2>
+                            <p><img height="200%" width="200%" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/containers-101.png" /></p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Ensuring Deployment Consistency</h2>
+                            <p>The battle against OS + configuration skew!</p>
+                            <p class="fragment">Stone Age == Golden images</p>
+                            <p class="fragment">Industrial age == VM images + configuration management tooling</p>
+                            <p class="fragment">Future == containers served from registry, referenced by SHA256</p>
+                    </section>
+                    <section>
+                        <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/exploding-brain.jpg" /></p>
+                    </section>
+                    <section>
+                        <h2>Immutable Host?</h2>
+                            <p><em>See also: immutable infrastructure</em></p>
+                            <p>"An immutable host is where the OS is delivered in such a way where OS modification is not expected*"</p>
+                            <p class="fragment" style="font-size: 50%">- me, <del>probably</del> definitely</p>
+                        <div class="fragment">
+                            <hr style="width: 80%"/>
+                            <p>Allows for hosts to become disposable (i.e. <a href="https://youtu.be/w99SWWfad4M?t=1665">cattle/elephants</a>)</p>
+                            <p>Provides a foundation for repeatable deployments (i.e. <a href="https://martinfowler.com/bliki/PhoenixServer.html">phoenix servers</a>)<p>
+                            <p>Typically delivered as image (or image-like artifact)<p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Some Options</h2>
+                            <p>RancherOS</p>
+                            <p>Ubuntu Core</p>
+                            <p>OpenSUSE MicroOS</p>
+                            <p>NixOS</p>
+                            <p>VMWare Photon</p>
+                    </section>
+                    <section>
+                        <h2>RancherOS</h2>
+                            <p><img width="50%" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/rancheros.png" /></p>
+                            <p>Docker containers for <b>EVERYTHING</b></p>
+                            <p>Upgrades handled via A/B boot entries</p>
+                            <p>Uses cloud-config for initial host configuration</p>
+                    </section>
+                    <section>
+                        <h2>OpenSUSE MicroOS/Kubic</h2>
+                            <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/kubic.png" /></p>
+                            <p>Atomic updates via btrfs snapshots</p>
+                            <p>Read-only root filesystem</p>
+                            <p>Docker + Podman + CRIO runtimes available</p>
+                            <p>cloud-init for system customization</p>
+                    </section>
+                    <section>
+                        <h2>NixOS</h2>
+                            <p><img height="350" width="350" style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/nixos.png" /></p>
+                            <p>Fully declarative system configuration</p>
+                            <p>Transactional upgrade model</p>
+                            <p>Reproducible from source</p>
+                            <p>Non-privileged users can install packages</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Fedora/Red Hat Atomic Host</h2>
+                        <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/projectatomic.png" /></p>
+                        <p>RPM-based</p>
+                        <p>Immutable root filesystem</p>
+                        <p>Updates delivered via ostree/rpm-ostree</p>
+                        <p>Atomic, transactional updates</p>
+                        <p>Fully supports SELinux</p>
+                    </section>
+                    <section>
+                        <h2>CoreOS Container Linux</h2>
+                        <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/container-linux.png" /></p>
+                        <p>Gentoo-based</p>
+                        <p>declaratively configure system (Ignition)</p>
+                        <p>OS auto-updates</p>
+                        <p>A/B partitioning for updates</p>
+                        <p>no package manager (containerize everything)</p>
+                        <p>etcd: distributed key-value store</p>
+                    </section>
+                    <section>
+                        <h2>Let Our Powers Combine...</h2>
+                            <p><img style="border: 0; border-style: none; box-shadow: none; vertical-align: middle;" src="../icons/fedora-coreos.png" /></p>
+                            <p>Philosophy of Container Linux
+                            <p>Technology of Atomic Host
+                            <p>"An automatically updating, minimal, monolithic, container-focused operating system, designed for clusters but also operable standalone, optimized for Kubernetes but also great without it."
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>CoreOS Technology Pillars</h2>
+                        <p><a href="https://gitub.com/ostreedev/ostree">ostree</a>/<a href="https://github.com/coreos/rpm-ostree">rpm-ostree</a> - managing OS contents</p>
+                        <p><a href="https://github.com/coreos/ignition">Ignition</a> - declaratively configure system</p>
+                        <p><a href="https://github.com/containers/libpod">podman</a> - build, run, manage containers</p>
+                        <p><a href="https://github.com/coreos/zincati">zincati</a> - update agent</p>
+                        <p><a href="https://github.com/coreos/coreos-assembler">coreos-assembler</a> - build CoreOS-style systems</p>
+                    </section>
+                    <section>
+                        <h2>What is ostree + rpm-ostree?</h2>
+                        <p style="font-size: smaller"><a href="https://github.com/ostreedev/ostree">(lib)ostree</a> can be simplified as "git for operating systems"</p>
+                        <p style="font-size: smaller">Files are checksummed + tracked via content-addressed object store</p>
+                        <p style="font-size: smaller">Files are de-duplicated via hardlinks</p>
+                        <p style="font-size: smaller">Can handle bootloader configuration, management of /etc</p>
+                    </section>
+                    <section>
+                        <h2>Quoting the rpm-ostree documentation...</h2>
+                        <p><a href="https://github.com/projecatomic/rpm-ostree">rpm-ostree</a> is a hybrid image/package system</p>
+                        <p>Uses <strong>libostree</strong> as the base image format</p>
+                        <p>Accepts RPMs on the server side for composes and on the client side for package layering using <a href="https://github.com/rpm-software-management/libdnf">libdnf</a></p>
+                        <p>Primary entrypoint for managing your CoreOS-style system</p>
+                    </section>
+                    <section>
+                        <h2>Podman</h2>
+                            <p>Intended as a drop-in replacement for (most of) docker CLI</p>
+                            <p>Supports OCI image format and Docker image format</p>
+                            <p>Doesn't require a daemon running (<a href="https://twitter.com/search?q=%23nobigfatdaemons&f=live">#nobigfatdaemons</a>)</p>
+                            <p>Full management of container life cycle</p>
+                            <p>Can run containers as unprivileged user</p>
+                    </section>
+                    <section>
+                        <h2>Ignition</h2>
+                        <p>Ignition configs: declarative JSON documents provided via user data</p>
+                        <p>Can write files and systemd units, create users and groups, partition disks, create RAID arrays, format filesystems</p>
+                        <p>Runs from the initramfs</p>
+                        <p>Runs exactly once</p>
+                        <p>Fails the boot if provisioning fails</p>
+                    </section>
+                    <section>
+                        <h2>Zincati</h2>
+                        <p>rpm-ostree is driven by a service, Zincati, that requests permission to update</p>
+                        <p>Updates are rolled out gradually, and can be stopped if regressions are reported</p>
+                        <p>Nodes can request update permission from a cluster service</p>
+                        <p>Useful for ensuring an entire cluster doesn't update simultaneously</p>
+                    </section>
+                    <section>
+                        <h2>coreos-assembler</h2>
+                        <p>Both the developer and production tool</p>
+                            <ul>
+                                <li>cosa init https://github.com/coreos/fedora-coreos-config</li>
+                                <li>cosa fetch</li>
+                                <li>cosa build</li>
+                            </ul>
+                        <p>Can run fully unprivileged</p>
+                        <p>Uses rpm-ostree and supermin</p>
+                        <p>Doesn’t use Anaconda to build images</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Immutable Host for the Desktop?!</h2>
+                        <p><img style="border: 0; border-style: none; box-shadow: none;" src="../icons/civil-war.jpg" />
+                    </section>
+                    <section>
+                        <h2>Comparing Silverblue to Fedora Workstation</h2>
+                        <p>Both share the following:</p>
+                        <div class="fragment">
+                            <p>RPMs from the Fedora ecosystem</p>
+                            <p>Support package installation (although differently)<p>
+                            <p>Can run containers and Flatpaks<p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Filesystem Mutability</h2>
+                        <p class="fragment">Only /var and /etc are writeable on Silverblue</p>
+                        <div class="fragment">
+                            <img src="nvidia-rm-rf-usr.png" style="border: 0; border-style: none; box-shadow: none;" />
+                            <p style="font-size: 50%">Image credit: <a href="https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123">https://github.com/MrMEEE/bumblebee-Old-and-abbandoned/issues/123</a></p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Upgrade Mechanisms</h2>
+                        <div class="fragment" style="font-size: smaller">
+                            <p>Silverblue uses atomic, transactional updates</p>
+                            <p>Running system is not touched during updates (thank you <strong><a href="https://github.com/projectatomic/bubblewrap">bubblewrap</a></strong>)</p>
+                            <p>You can pull the plug on a Silverblue host during an upgrade</p>
+                            <p>Tradeoff: reboot to get into upgraded OS</p>
+                        </div>
+                        <div class="fragment">
+                            <img src="x-crash-systemd-udev.png" style="border: 0; border-style: none; box-shadow: none;" /></p>
+                            <p style="font-size: 50%">Image credit: <a href="https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/">https://www.happyassassin.net/2016/10/04/x-crash-during-fedora-update-when-system-has-hybrid-graphics-and-systemd-udev-is-in-update/</a></p>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Different Delivery Mechanisms</h2>
+                        <div class="fragment">
+                            <p>Workstation delivered as traditional RPMs</p>
+                            <p>Silverblue has OS delivered as OSTree commit</p>
+                            <p>Although both can install packages as RPMs</p>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Recent Developments in Silverblue</h2>
+                    <p>Support for <a href="https://github.com/projectatomic/rpm-ostree/pull/1795">installing (some) packages to /opt</a>; namely Google Chrome</p>
+                    <p>Support for <a href="https://blogs.gnome.org/alexl/2019/03/06/nvidia-drivers-in-fedora-silverblue/">Nvidia drivers (akmods)</a></p>
+                    <p>Shoutout to <a href="https://twitter.com/gnomealex">Alex Larsson</a> for both of those features!</p>
+                    <div class="fragment">
+                        <h2>Going Forward</h2>
+                        <p>Enabling automatic OS upgrades by default</p>
+                        <p>Installed Flatpaks out of the box (<a href="https://blog.fishsoup.net/2018/12/04/flatpaks-in-fedora-now-live/">built + delivered from Fedora infra</a>)</p>
+                        <p>Making Silverblue default Fedora Workstation choice?</p>
+                        <p>Building Silverblue via <a href="https://github.com/coreos/coreos-assembler">coreos-assembler</a></p>
+                        <p>Improving documentation, growing the community</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Recent Developments in Fedora CoreOS</h2>
+                    <p>Preview release available now - <a href="https://getfedora.org/coreos">https://getfedora.org/coreos</a>
+                    <p>Don't run it in production!</p>
+                    <p>First stable release in ~3 months</p>
+                    <div class="fragment">
+                        <h2>Going Forward</h2>
+                        <p><em>next</em> and <em>stable</em> streams</p>
+                        <p>Full set of cloud and virtualization platforms</p>
+                        <p>Live PXE and Live CD</p>
+                        <p>Improved network configuration</p>
+                        <p>OKD/Kubernetes integration</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Get Involved!</h2>
+                    <p>Community Discourse - <a href="https://discussion.fedoraproject.org/">https://discussion.fedoraproject.org/</a></p>
+                    <p>CoreOS Issue Tracker - <a href="https://github.com/coreos/fedora-coreos-tracker">https://github.com/coreos/fedora-coreos-tracker</a></p>
+                    <p>Silverblue Issue Tracker - <a href="https://github.com/fedora-silverblue/issue-tracker">https://github.com/fedora-silverblue/issue-tracker</a></p>
+                    <p>Silverblue Twitter - <a href="https://twitter.com/teamsilverblue">https://twitter.com/teamsilverblue</a></p>
+                </section>
+
+                <section>
+                    <h2>Thanks for Coming to my Talk!</h2>
+                    <p><img src="tedtalk.jpg" style="border: 0; border-style: none; box-shadow: none;" /></p>
+                    <h2>Contact Me!</h2>
+                    <p>Twitter - <a href="https://twitter.com/rageear">https://twitter.com/rageear</a></p>
+                    <p>Email - <a href="mailto:miabbott@redhat.com">miabbott@redhat.com</a></p>
+                </section>
+            </div>
+        </div>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+                width: "100%",
+                height: "100%",
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true }
+				]
+			});
+		</script>
+    </body>
+</html>

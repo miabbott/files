@@ -1,0 +1,3 @@
+Slides and media can be found on GitHub
+
+https://github.com/miabbott/files/tree/master/slides/2019/getting-to-know-fedora-silverblue
