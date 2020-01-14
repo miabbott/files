@@ -117,6 +117,8 @@ dnf_cmd install \
                    rhpkg \
                    rpm-ostree \
                    rsync \
+                   rubygems \
+                   ruby-devel \
                    ShellCheck \
                    skopeo \
                    sshpass \
@@ -124,7 +126,8 @@ dnf_cmd install \
                    tig \
                    tmux \
                    tree \
-                   vim
+                   vim \
+                   wget
 
 # install keybase
 dnf_cmd install https://prerelease.keybase.io/keybase_amd64.rpm
