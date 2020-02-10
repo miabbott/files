@@ -19,7 +19,7 @@ releasever=$1; shift
 
 registry="docker-registry.registry.upshift.redhat.com"
 
-token="$(cat /home/miabbott/.secrets/upshift-registry-sa.secret)"
+token="$(cat /home/${USER}/.secrets/upshift-registry-sa.secret)"
 
 # create base container
 ctr=$(buildah from registry.fedoraproject.org/fedora:"$releasever")
