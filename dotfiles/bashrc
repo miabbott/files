@@ -58,17 +58,35 @@ function rhcos()
 }
 
 ## coreos-assembler
+# Old function
+#function coreos-assembler() {
+#    env | grep COREOS_ASSEMBLER
+#    set -x # so we can see what command gets run
+#    sudo chrt --idle 0 podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name coreos-assembler --net=host \
+#              --tmpfs /tmp -v /var/tmp:/var/tmp \
+#               ${COREOS_ASSEMBLER_PRIVILEGED:+--privileged}                                          \
+#               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
+#               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
+#               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
+#               ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
+#    rc=$?; set +x; return $rc
+#}
 function coreos-assembler() {
-    env | grep COREOS_ASSEMBLER
-    set -x # so we can see what command gets run
-    sudo chrt --idle 0 podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name coreos-assembler --net=host \
-               ${COREOS_ASSEMBLER_PRIVILEGED:+--privileged}                                          \
-               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
-               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
-               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
-               ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
-    rc=$?; set +x; return $rc
+   env | grep COREOS_ASSEMBLER
+   set -x # so we can see what command gets run
+   chrt --idle 0 podman run --rm -ti --security-opt label=disable --privileged                      \
+              --uidmap=1000:0:1 --uidmap=0:1:1000 --uidmap 1001:1001:64536                          \
+              -v ${PWD}:/srv/ --device /dev/kvm --device /dev/fuse                                  \
+              --tmpfs /tmp -v /var/tmp:/var/tmp --name coreos-assembler                             \
+              ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
+              ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
+              ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
+              ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
+   rc=$?; set +x; return $rc
 }
+
+
+
 
 # prep a dir for building with cosa
 function cosa_prep_dir()
@@ -101,8 +119,9 @@ function MyPrecious()
                                   -v $KRB5CCNAME:$KRB5CCNAME:z \
                                   -v /var/srv:/var/srv \
                                   -v /var/cache/dnf:/var/cache/dnf \
-                                  -v $HOME:$HOME \
+                                  -v $HOME:/home/miabbott \
                                   -v /etc/localtime:/etc/localtime \
+                                  --device /dev/kvm \
                                   localhost/miabbott/myprecious:$1
 }
 
@@ -193,6 +212,9 @@ alias installer="pushd ~/workspaces/go/src/github.com/openshift/installer"
 
 # Run htop in a container
 alias htop="sudo chrt --idle 0 podman run -it --rm --pid=host quay.io/miabbott/htop"
+
+# Run glances in a container
+alias glances="sudo chrt --idle 0 podman run -it --rm --pid=host localhost/miabbott/glances"
 
 # handy for doing local ostree tests
 alias ost="ostree --repo=repo"
