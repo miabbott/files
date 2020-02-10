@@ -111,6 +111,7 @@ dnf_cmd install \
                    python-qpid-messaging \
                    python-saslwrapper \
                    python2-virtualenv \
+                   python3-flake8 \
                    python3-pylint \
                    python3-virtualenv \
                    redhat-rpm-config \
