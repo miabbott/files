@@ -85,6 +85,17 @@ function coreos-assembler() {
    rc=$?; set +x; return $rc
 }
 
+function cosa42() {
+    env | grep COREOS_ASSEMBLER
+    set -x # so we can see what command gets run
+    sudo podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name cosa \
+               ${COREOS_ASSEMBLER_PRIVILEGED:+--privileged}                                          \
+               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
+               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
+               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
+               ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
+    rc=$?; set +x; return $rc
+}
 
 
 
@@ -114,7 +125,7 @@ function MyPrecious()
         echo "Need to specify release version"
         return 1
     fi
-
+    set -x
     sudo chrt --idle 0 podman run --net=host --rm -it --privileged \
                                   -v $KRB5CCNAME:$KRB5CCNAME:z \
                                   -v /var/srv:/var/srv \
@@ -122,7 +133,8 @@ function MyPrecious()
                                   -v $HOME:/home/miabbott \
                                   -v /etc/localtime:/etc/localtime \
                                   --device /dev/kvm \
-                                  localhost/miabbott/myprecious:$1
+                                  docker-registry.upshift.redhat.com/miabbott/myprecious:$1
+    set +x
 }
 
 ### ENV VARS ###
@@ -259,7 +271,7 @@ source ~/rhos-testing.sh
 #
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/miabbott/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/home/miabbott/Downloads/google-cloud-sdk/path.bash.inc'; fi
+if [ -f '/var/home/miabbott/google-cloud-sdk/path.bash.inc' ]; then . '/var/home/miabbott/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/home/miabbott/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/home/miabbott/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+if [ -f '/var/home/miabbott/google-cloud-sdk/completion.bash.inc' ]; then . '/var/home/miabbott/google-cloud-sdk/completion.bash.inc'; fi
