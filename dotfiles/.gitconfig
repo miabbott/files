@@ -1,6 +1,7 @@
 [user]
     name = Micah Abbott
     email = miabbott@redhat.com
+    signingkey = 9CF150C0BE32D908
 [push]
     default = simple
 [core]
@@ -30,3 +31,5 @@
 [grep]
 	lineNumber = true
 	extendRegexp = true
+[gpg]
+	program = gpg2
