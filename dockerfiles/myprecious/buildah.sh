@@ -17,7 +17,7 @@ if [ $# -eq 0 ]; then
 fi
 releasever=$1; shift
 
-registry="docker-registry.registry.upshift.redhat.com"
+registry="docker-registry.upshift.redhat.com"
 
 token="$(cat /home/miabbott/.secrets/upshift-registry-sa.secret)"
 
