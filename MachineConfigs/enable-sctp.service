@@ -1,0 +1,10 @@
+[Unit]
+Description=enables SCTP module
+Before=kubelet.service
+
+[Service]
+Type=oneshot
+ExecStart=modprobe sctp
+
+[Install]
+WantedBy=multi-user.target

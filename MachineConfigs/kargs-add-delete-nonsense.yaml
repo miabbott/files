@@ -1,0 +1,11 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: 71-multi-kargs-add-delete
+spec:
+    kernelArguments:
+      - foo=bar
+      - beer=life
+      - up=down

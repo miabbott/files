@@ -1,0 +1,17 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: KubeletConfig
+metadata:
+  name: more-cpu
+spec:
+  machineConfigPoolSelector:
+    matchLabels:
+      custom-kubelet: more-cpu
+  kubeletConfig:
+    systemReserved:
+      cpu: 1500m
+      memory: 512Mi
+    kubeReserved:
+      cpu: 1500m
+      memory: 512Mi
+
+

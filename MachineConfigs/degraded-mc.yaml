@@ -1,0 +1,15 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+ labels:
+   machineconfiguration.openshift.io/role: master
+ name: 50-examplecorp-chrony
+spec:
+ config:
+   storage:
+     files:
+     - contents:
+         source: data:,server%20foo.example.net%20maxdelay%200.4%20offline%0Aserver%20bar.example.net%20maxdelay%200.4%20offline%0Aserver%20baz.example.net%20maxdelay%200.4%20offline
+       filesystem: root
+       mode: 0644
+       path: /etc/chrony.conf

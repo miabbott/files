@@ -1,0 +1,144 @@
+Name:         worker
+Namespace:    
+Labels:       machineconfiguration.openshift.io/mco-built-in=
+Annotations:  <none>
+API Version:  machineconfiguration.openshift.io/v1
+Kind:         MachineConfigPool
+Metadata:
+  Creation Timestamp:  2020-07-02T14:56:53Z
+  Generation:          3
+  Managed Fields:
+    API Version:  machineconfiguration.openshift.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:labels:
+          .:
+          f:machineconfiguration.openshift.io/mco-built-in:
+      f:spec:
+        .:
+        f:configuration:
+        f:machineConfigSelector:
+          .:
+          f:matchLabels:
+            .:
+            f:machineconfiguration.openshift.io/role:
+        f:nodeSelector:
+          .:
+          f:matchLabels:
+            .:
+            f:node-role.kubernetes.io/worker:
+        f:paused:
+    Manager:      machine-config-operator
+    Operation:    Update
+    Time:         2020-07-02T14:56:53Z
+    API Version:  machineconfiguration.openshift.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:spec:
+        f:configuration:
+          f:name:
+          f:source:
+      f:status:
+        .:
+        f:conditions:
+        f:configuration:
+          .:
+          f:name:
+          f:source:
+        f:degradedMachineCount:
+        f:machineCount:
+        f:observedGeneration:
+        f:readyMachineCount:
+        f:unavailableMachineCount:
+        f:updatedMachineCount:
+    Manager:         machine-config-controller
+    Operation:       Update
+    Time:            2020-07-02T18:17:34Z
+  Resource Version:  85892
+  Self Link:         /apis/machineconfiguration.openshift.io/v1/machineconfigpools/worker
+  UID:               7fb4950f-1629-4cc3-b824-d2c7c1f7bd62
+Spec:
+  Configuration:
+    Name:  rendered-worker-fc8194dd3a39cd0d2bd4d27149755148
+    Source:
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         00-worker
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-worker-container-runtime
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         01-worker-kubelet
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-ignition-files-minimal
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-7fb4950f-1629-4cc3-b824-d2c7c1f7bd62-registries
+      API Version:  machineconfiguration.openshift.io/v1
+      Kind:         MachineConfig
+      Name:         99-worker-ssh
+  Machine Config Selector:
+    Match Labels:
+      machineconfiguration.openshift.io/role:  worker
+  Node Selector:
+    Match Labels:
+      node-role.kubernetes.io/worker:  
+  Paused:                              false
+Status:
+  Conditions:
+    Last Transition Time:  2020-07-02T14:57:50Z
+    Message:               
+    Reason:                
+    Status:                False
+    Type:                  RenderDegraded
+    Last Transition Time:  2020-07-02T14:57:55Z
+    Message:               
+    Reason:                
+    Status:                False
+    Type:                  NodeDegraded
+    Last Transition Time:  2020-07-02T14:57:55Z
+    Message:               
+    Reason:                
+    Status:                False
+    Type:                  Degraded
+    Last Transition Time:  2020-07-02T18:17:34Z
+    Message:               All nodes are updated with rendered-worker-fc8194dd3a39cd0d2bd4d27149755148
+    Reason:                
+    Status:                True
+    Type:                  Updated
+    Last Transition Time:  2020-07-02T18:17:34Z
+    Message:               
+    Reason:                
+    Status:                False
+    Type:                  Updating
+  Configuration:
+    Name:  rendered-worker-fc8194dd3a39cd0d2bd4d27149755148
+    Source:
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   00-worker
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-worker-container-runtime
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   01-worker-kubelet
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-ignition-files-minimal
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-7fb4950f-1629-4cc3-b824-d2c7c1f7bd62-registries
+      API Version:            machineconfiguration.openshift.io/v1
+      Kind:                   MachineConfig
+      Name:                   99-worker-ssh
+  Degraded Machine Count:     0
+  Machine Count:              3
+  Observed Generation:        3
+  Ready Machine Count:        3
+  Unavailable Machine Count:  0
+  Updated Machine Count:      3
+Events:                       <none>

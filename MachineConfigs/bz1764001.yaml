@@ -1,0 +1,28 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: 10-crio-default-env
+spec:
+  config:
+    ignition:
+      config: {}
+      security:
+        tls: {}
+      timeouts: {}
+      version: 2.2.0
+    networkd: {}
+    passwd: {}
+    systemd: {
+            "units": [
+                {
+                "name": "crio.service",
+                "dropins": [{
+                  "name": "10-default-env.conf",
+                  "contents": '#foo'
+                  }]
+                }
+            ]
+        }

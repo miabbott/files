@@ -1,0 +1,14 @@
+# This MachineConfig demonstrates the minimal requirements for writing out a
+# file to the node
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: 99-so-many-files
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:

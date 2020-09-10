@@ -1,0 +1,24 @@
+# This MachineConfig demonstrates using the verification ability
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: 99-ignition-files-verify
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:
+        - contents:
+            source: data:text/plain;charset=utf-8;base64,b3duZWQgYnkgY29yZQo=
+            verification:
+              hash: sha512-5ee67ed4a5d2f4b9fc0039bca54deaf293e7ada3298fee84557761b54324ebcd0979e2753921a3fc9a0ffb2f0b4468487d253a3cae07c12b2051f599dc6819e8
+          filesystem: root
+          path: /var/srv/owned-by-core.txt
+          mode: 0644
+          user:
+            name: core
+          group:
+            id: 1000
