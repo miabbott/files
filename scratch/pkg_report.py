@@ -14,7 +14,7 @@ RELEASES = ['rhcos-4.4',
             'rhcos-4.5-ppc64le',
             'rhcos-4.5-s390x',
             'rhcos-4.6',
-            'rhcos-4.6-ppcle'
+            'rhcos-4.6-ppcle',
             'rhcos-4.6-s390x']  
 
 
