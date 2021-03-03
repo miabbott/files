@@ -14,11 +14,17 @@ RELEASES = ['rhcos-4.4',
             'rhcos-4.5-ppc64le',
             'rhcos-4.5-s390x',
             'rhcos-4.6',
-            'rhcos-4.6-ppcle',
-            'rhcos-4.6-s390x']  
+            'rhcos-4.6-ppc64le',
+            'rhcos-4.6-s390x',
+            'rhcos-4.7',
+            'rhcos-4.7-ppc64le',
+            'rhcos-4.7-s390x',
+            'rhcos-4.8',
+            'rhcos-4.8-ppc64le',
+            'rhcos-4.8-s390x']
 
 
-def get_builds(release):    
+def get_builds(release):
     build_list = []
     builds_url = BASEURL + release + '/builds.json'
     builds_req = requests.get(builds_url)
@@ -39,7 +45,7 @@ def find_package(package=None, release=None):
     split_release = release.split('-')
     if len(split_release) > 2:
         arch = split_release[2]
-    
+
     try:
         release_builds = get_builds(release)
     except:
@@ -58,7 +64,7 @@ def find_package(package=None, release=None):
             if rpm[0] == package and nvr not in build_package_map.values():
                 build_package_map[bld] = nvr
                 break
-    
+
     return build_package_map
 
 def main():
