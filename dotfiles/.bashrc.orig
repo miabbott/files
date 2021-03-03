@@ -206,9 +206,7 @@ alias flush-arp="ip -s -s neigh flush all"
 
 # Use 'sudo' with aliases
 # http://askubuntu.com/a/22043
-# This broke in F33
-# https://unix.stackexchange.com/questions/627998/how-to-resolve-vi-internal-vim-alias-command-not-found
-#alias sudo="sudo "
+alias sudo="sudo "
 
 # Retrieve IP of libvirt VM
 alias get-vm-ip=GetVmIp
@@ -230,11 +228,13 @@ alias htop="sudo chrt --idle 0 podman run -it --rm --pid=host quay.io/miabbott/h
 # Run glances in a container
 alias glances="sudo chrt --idle 0 podman run -it --rm --pid=host localhost/miabbott/glances"
 
-# Run bpytop in a container
-alias bpytop="sudo chrt --idle 0 podman run -it --rm --net=host --pid=host localhost/miabbott/bpytop"
-
 # handy for doing local ostree tests
 alias ost="ostree --repo=repo"
+
+# coreos-assembler
+#alias coreos-assembler="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv quay.io/coreos-assembler/coreos-assembler"
+alias local-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
+alias dev-ca="chrt --idle 0 podman run --rm --net=host -ti --privileged --userns=host -v /home/miabbott/workspaces/coreos/coreos-assembler/src:/usr/lib/coreos-assembler:ro -v $(pwd):/srv --workdir /srv localhost/miabbott/coreos-assembler"
 
 # provide alias for jq when not in container
 if [[ "$__in_dockerenv" != yes ]]; then
