@@ -37,6 +37,9 @@ case $action in
         dnf -y --skip-broken install $rpms
         ;;
     cleanup)
+        if [ "$(id -u)" -eq 0 ]; then
+            echo "You are running cleanup as superuser; you probably want to run this as a normal user"
+        fi
         rm -rf "$HOME/toolbox-repos-backup/" "$HOME/toolbox-rpms.backup"
         ;;
     *)
