@@ -6,6 +6,8 @@ import os
 import re
 import rpm
 import shutil
+import subprocess
+import sys
 
 BACKUP_DIR = "~/.local/share/toolbox-backup/"
 YUM_REPOS_DIR = "/etc/yum.repos.d/"
@@ -67,6 +69,76 @@ def backup(dir=None, repos=None, rpms=None, certs=None):
     logging.debug("Backup of toolbox config complete")
 
 
+def restore(dir=None, repos=None, rpms=None, certs=None):
+    if os.getuid() != 0:
+        logging.error("Must run restore operation as superuser")
+        sys.exit(1)
+
+    if dir is None:
+        dir = BACKUP_DIR
+    
+    backup_dir_path=os.path.expanduser(dir)
+    if not os.path.isdir(backup_dir_path):
+        logging.error(f"Unable to find toolbox backup dir at {backup_dir_path}")
+        sys.exit(1)
+
+    restore_all = True
+    if repos is not None or rpms is not None or certs is not None:
+        restore_all = False
+
+    if restore_all or repos:
+        yum_repo_backup_dir = os.path.join(backup_dir_path, "repos")
+        if not os.path.isdir(yum_repo_backup_dir):
+            logging.error(f"Unable to find repo backup dir at {yum_repo_backup_dir}")
+            sys.exit(1)
+
+        backup_repos = os.listdir(yum_repo_backup_dir)
+        if len(backup_repos) < 1:
+            logging.warning(f"Did not find any repo files in {yum_repo_backup_dir}")
+        else:
+            for repo in backup_repos:
+                src = os.path.join(yum_repo_backup_dir, repo)
+                dst = os.path.join(YUM_REPOS_DIR, repo)
+                logging.debug(f"Restoring repo file {repo}")
+                shutil.copy(src, dst)
+        
+    if restore_all or rpms:
+        rpms_backup_file = os.path.join(backup_dir_path, "toolbox-rpms.backup")
+        if not os.path.isfile(rpms_backup_file):
+            logging.error(f"Unable to find RPM backup file at {rpms_backup_file}")
+            sys.exit(1)
+    
+        with open(rpms_backup_file, 'r') as f:
+            rpms = f.read()
+
+        dnf_install = ['dnf', '-y', '--skip-broken', 'install']
+        for r in rpms.split():
+            dnf_install.append(r)
+        
+        logging.debug("Starting restore of RPMs")
+        install_cp = subprocess.run(dnf_install, capture_output=True, text=True)
+        if install_cp.returncode != 0:
+            logging.error("Failed to restore RPMs from backup list")
+            logging.error(install_cp.stderr)
+            sys.exit(1)
+        
+        nomatch_re = re.compile("^No match for argument: (.*)")
+        nomatch_rpms = []
+        for l in install_cp.split("\n"):
+            m = nomatch_re.match(l)
+            if m:
+                nomatch_rpms.append(m.group(1))
+        
+        if len(nomatch_rpms) > 0:
+            logging.debug(f"Unable to install following RPMs: {nomatch_rpms}")
+        
+        logging.debug("Finished restoring RPMs")
+        
+
+        
+
+            
+            
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('operation',
