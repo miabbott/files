@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# TODO: Probably make a Class to share code
+# TODO: Better error handling during copy/install operations
+
+
 import argparse
 import logging
 import os
