@@ -13,7 +13,7 @@ import shutil
 import subprocess
 import sys
 
-BACKUP_DIR = "/.local/share/toolbox-backup/"
+BACKUP_DIR = ".local/share/toolbox-backup/"
 YUM_REPOS_DIR = "/etc/yum.repos.d/"
 CA_CERT_DIR = "/etc/pki/ca-trust/source/anchors/"
 
