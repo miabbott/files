@@ -2,7 +2,7 @@
 
 # TODO: Probably make a Class to share code
 # TODO: Better error handling during copy/install operations
-
+# TODO: Diff backup RPMs and currently installed RPMs
 
 import argparse
 import logging
@@ -13,13 +13,13 @@ import shutil
 import subprocess
 import sys
 
-BACKUP_DIR = "~/.local/share/toolbox-backup/"
+BACKUP_DIR = "/.local/share/toolbox-backup/"
 YUM_REPOS_DIR = "/etc/yum.repos.d/"
 CA_CERT_DIR = "/etc/pki/ca-trust/source/anchors/"
 
 def backup(dir=None, repos=None, rpms=None, certs=None):
     if dir is None:
-        dir = BACKUP_DIR
+        dir = os.path.join(os.environ['HOME'], BACKUP_DIR)
 
     backup_dir_path=os.path.expanduser(dir)
     if not os.path.isdir(backup_dir_path):
@@ -29,7 +29,7 @@ def backup(dir=None, repos=None, rpms=None, certs=None):
     # Backup everything by default; if one of the options is not None
     # then we'll only backup that part
     backup_all = True
-    if repos is not None or rpms is not None or certs is not None:
+    if repos or rpms or certs :
         backup_all = False
 
     if backup_all or repos:
@@ -79,7 +79,7 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
         sys.exit(1)
 
     if dir is None:
-        dir = BACKUP_DIR
+        dir = os.path.join(os.environ['SUDO_HOME'], BACKUP_DIR)
     
     backup_dir_path=os.path.expanduser(dir)
     if not os.path.isdir(backup_dir_path):
@@ -87,7 +87,7 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
         sys.exit(1)
 
     restore_all = True
-    if repos is not None or rpms is not None or certs is not None:
+    if repos or rpms or certs:
         restore_all = False
 
     if restore_all or repos:
