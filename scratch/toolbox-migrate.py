@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# TODO: Implement cleanup()
 # TODO: Probably make a Class to share code
 # TODO: Better error handling during copy/install operations
 # TODO: Diff backup RPMs and currently installed RPMs
@@ -90,6 +91,28 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
     if repos or rpms or certs:
         restore_all = False
 
+    if restore_all or certs:
+        cert_backup_dir = os.path.join(backup_dir_path, "certs")
+        if not os.path.isdir(cert_backup_dir):
+            logging.error(f"Unable to find the CA cert backup dir {cert_backup_dir}")
+            sys.exit(1)
+
+        backup_certs = os.listdir(cert_backup_dir)
+        if len(backup_certs) < 1:
+            logging.warning(f"Did not find any CA certs to restore at {cert_backup_dir}")
+        else:
+            for cert in backup_certs:
+                src = os.path.join(cert_backup_dir, cert)
+                dst = os.path.join(CA_CERT_DIR, cert)
+                logging.debug(f"Restoring CA cert named {cert}")
+                shutil.copy(src, dst)
+
+            update_cp = subprocess.run(['update-ca-trust'], capture_output=True, text=True)
+            if update_cp.returncode != 0:
+                logging.error("Failed to update the CA trust")
+                logging.error(update_cp.stderr)
+                sys.exit(1)
+
     if restore_all or repos:
         yum_repo_backup_dir = os.path.join(backup_dir_path, "repos")
         if not os.path.isdir(yum_repo_backup_dir):
@@ -128,7 +151,7 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
     
         nomatch_re = re.compile("^No match for argument: (.*)")
         nomatch_rpms = []
-        for l in install_cp.split("\n"):
+        for l in install_cp.stdout.split("\n"):
             m = nomatch_re.match(l)
             if m:
                 nomatch_rpms.append(m.group(1))
@@ -159,6 +182,9 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
                 logging.error("Failed to update the CA trust")
                 logging.error(update_cp.stderr)
                 sys.exit(1)
+
+def cleanup(dir=None, repos=None, rpms=None, certs=None):
+    pass
 
             
 def main():
