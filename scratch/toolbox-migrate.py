@@ -79,7 +79,7 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
         sys.exit(1)
 
     if dir is None:
-        dir = os.path.join(os.environ['SUDO_USER'], BACKUP_DIR)
+        dir = os.path.join("/var/home/", os.environ['SUDO_USER'], BACKUP_DIR)
     
     backup_dir_path=os.path.expanduser(dir)
     if not os.path.isdir(backup_dir_path):
