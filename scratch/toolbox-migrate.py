@@ -20,7 +20,7 @@ CA_CERT_DIR = "/etc/pki/ca-trust/source/anchors/"
 def backup(dir=None, repos=None, rpms=None, certs=None):
     if dir is None:
         dir = BACKUP_DIR
-    
+
     backup_dir_path=os.path.expanduser(dir)
     if not os.path.isdir(backup_dir_path):
         logging.debug(f"Making toolbox backup directory at {backup_dir_path}")
@@ -118,30 +118,48 @@ def restore(dir=None, repos=None, rpms=None, certs=None):
         dnf_install = ['dnf', '-y', '--skip-broken', 'install']
         for r in rpms.split():
             dnf_install.append(r)
-        
+    
         logging.debug("Starting restore of RPMs")
         install_cp = subprocess.run(dnf_install, capture_output=True, text=True)
         if install_cp.returncode != 0:
             logging.error("Failed to restore RPMs from backup list")
             logging.error(install_cp.stderr)
             sys.exit(1)
-        
+    
         nomatch_re = re.compile("^No match for argument: (.*)")
         nomatch_rpms = []
         for l in install_cp.split("\n"):
             m = nomatch_re.match(l)
             if m:
                 nomatch_rpms.append(m.group(1))
-        
+   
         if len(nomatch_rpms) > 0:
             logging.debug(f"Unable to install following RPMs: {nomatch_rpms}")
         
         logging.debug("Finished restoring RPMs")
         
-
+    if restore_all or certs:
+        cert_backup_dir = os.path.join(backup_dir_path, "certs")
+        if not os.path.isdir(cert_backup_dir):
+            logging.error(f"Unable to find the CA cert backup dir {cert_backup_dir}")
+            sys.exit(1)
         
+        backup_certs = os.listdir(cert_backup_dir)
+        if len(backup_certs) < 1:
+            logging.warning(f"Did not find any CA certs to restore at {cert_backup_dir}")
+        else:
+            for cert in backup_certs:
+                src = os.path.join(cert_backup_dir, cert)
+                dst = os.path.join(CA_CERT_DIR, cert)
+                logging.debug(f"Restoring CA cert named {cert}")
+                shutil.copy(src, dst)
 
-            
+            update_cp = subprocess.run(['update-ca-trust'], capture_output=True, text=True)
+            if update_cp.returncode != 0:
+                logging.error("Failed to update the CA trust")
+                logging.error(update_cp.stderr)
+                sys.exit(1)
+
             
 def main():
     parser = argparse.ArgumentParser()
