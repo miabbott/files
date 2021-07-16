@@ -54,10 +54,16 @@ def main():
     fcos_pkgs.sort()
     rhcos_pkgs.sort()
 
-    same_pkgs = [pkg for pkg in fcos_pkgs if pkg in rhcos_pkgs]
-    print(same_pkgs)
-    # print(fcos_pkgs)
-    # print(rhcos_pkgs)
+    print(f'FCOS: {fcos_pkgs}')
+    print(f'RHCOS: {rhcos_pkgs}')
+
+    same_pkgs = [pkg for pkg in rhcos_pkgs if pkg in fcos_pkgs]
+    not_in_fcos_pkgs = [pkg for pkg in rhcos_pkgs if pkg not in fcos_pkgs]
+    not_in_rhcos_pkgs = [pkg for pkg in fcos_pkgs if pkg not in rhcos_pkgs]
+
+    print(f'RHCOS in FCOS: {same_pkgs}')
+    print(f'Not in FCOS: {not_in_fcos_pkgs}')
+    print(f'Not in RHCOS: {not_in_rhcos_pkgs}')
 
 if __name__ == "__main__":
     main()
