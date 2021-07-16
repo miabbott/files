@@ -98,6 +98,14 @@ function cosa42() {
 }
 
 
+# butane
+function butane() {
+    podman run --rm --tty --interactive \
+        --security-opt label=disable        \
+        --volume ${PWD}:/pwd --workdir /pwd \
+        quay.io/coreos/butane:release $@
+}
+
 
 # prep a dir for building with cosa
 function cosa_prep_dir()
@@ -137,6 +145,9 @@ function MyPrecious()
     set +x
 }
 
+## export functions currently used
+export -f coreos-assembler prompt_command
+
 ### ENV VARS ###
 
 # Configuring command history
@@ -175,7 +186,7 @@ if [[ "$__in_dockerenv" == yes ]]; then
 fi
 
 # add jlebon files to PATH
-export PATH="$PATH:/home/miabbott/workspaces/jlebon/files/bin"
+#export PATH="$PATH:/home/miabbott/workspaces/jlebon/files/bin"
 
 # Configure Go
 export GOPATH=~/workspaces/go
@@ -237,12 +248,13 @@ alias bpytop="sudo chrt --idle 0 podman run -it --rm --net=host --pid=host local
 alias ost="ostree --repo=repo"
 
 # provide alias for jq when not in container
-if [[ "$__in_dockerenv" != yes ]]; then
-    alias jq="chrt --idle 0 podman run --rm -i quay.io/miabbott/jq"
-fi
+#if [[ "$__in_dockerenv" != yes ]]; then
+#    alias jq="chrt --idle 0 podman run --rm -i quay.io/miabbott/jq"
+#fi
 
 # pet container
 alias myprecious=MyPrecious
+
 
 ### ERRATA ###
 
