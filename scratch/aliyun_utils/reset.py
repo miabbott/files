@@ -12,13 +12,11 @@ log.basicConfig(
     format='[%(levelname)s]: %(message)s',
     level=log.INFO)
 
-cmd_out = subprocess.run(['aliyun', 'ecs', 'DescribeRegions'], capture_output=True, text=True)
-regions_list = json.loads(cmd_out.stdout)['Regions']['Region']
-endpoint_map = {}
-for r in regions_list:
-    endpoint_map[r['RegionId']] = r['RegionEndpoint']
+meta_json = "builds/latest/x86_64/meta.json"
+if len(sys.argv) > 1:
+    meta_json = sys.argv[1]
 
-with open("builds/latest/x86_64/meta.json", 'r') as f:
+with open(meta_json, 'r') as f:
     meta = json.load(f)
 
 if 'aliyun' not in meta.keys():
@@ -26,6 +24,12 @@ if 'aliyun' not in meta.keys():
     sys.exit()
 
 aliyun = meta['aliyun']
+
+cmd_out = subprocess.run(['aliyun', 'ecs', 'DescribeRegions'], capture_output=True, text=True)
+regions_list = json.loads(cmd_out.stdout)['Regions']['Region']
+endpoint_map = {}
+for r in regions_list:
+    endpoint_map[r['RegionId']] = r['RegionEndpoint']
 
 for item in aliyun:
     region = item['name']
