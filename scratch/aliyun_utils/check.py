@@ -33,8 +33,8 @@ for item in aliyun:
     desc_out = subprocess.run(describe_cmd, capture_output=True, text=True)
     desc_json = json.loads(desc_out.stdout)
     if desc_json['TotalCount'] == 0:
-        log.info(f"Image {image} not present in {region}")
+        log.warn(f"Image {image} not present in {region}")
         continue
 
     if not desc_json['Images']['Image'][0]['IsPublic']:
-        log.info(f"Image {image} in region {region} is not public!")
+        log.warn(f"Image {image} in region {region} is not public!")
