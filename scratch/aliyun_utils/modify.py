@@ -3,7 +3,6 @@
 # Modifies Aliyun images to have name + description
 
 import json
-from tabnanny import check
 import requests
 import subprocess
 import sys
@@ -61,7 +60,7 @@ for b in builds_list:
             continue
         image_info = check_desc_json['Images']['Image'][0]
         if len(image_info['Description']) == 0 or len(image_info['ImageName']) == 0:
-            modify_cmd = base_cmd.copy() + ['ModifyImageAttribute', '--ImageId', image, '--RegionId', region, '--Description', '"{}"'.format(image_desc), '--ImageName', image_name]
+            modify_cmd = base_cmd.copy() + ['ModifyImageAttribute', '--ImageId', image, '--RegionId', region, '--Description', image_desc, '--ImageName', image_name]
             modify_out = subprocess.run(modify_cmd, capture_output=True, text=True)
             if modify_out.returncode != 0:
                 failed_image_region[region] = image
