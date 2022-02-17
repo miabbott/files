@@ -3,7 +3,9 @@
 # Modifies Aliyun images to have name + description
 
 import json
+import re
 import requests
+import os
 import subprocess
 import sys
 
@@ -27,13 +29,29 @@ builds = builds_req.json()['builds']
 builds_list = []
 [builds_list.append(b['id']) for b in builds if b['id'] not in builds_list]
 
+modified_builds = {}
+if os.path.exists("modified_builds.json"):
+    with open("modified_builds.json", 'r') as f:
+        modified_builds = json.load(f)
+
+
 failed_image_region = {}
 for b in builds_list:
+    if b in modified_builds.keys():
+        print(f"{b} has already been modified")
+        continue
+
     meta_url = base_url + b + '/x86_64/meta.json'
     meta_req = requests.get(meta_url)
+    if not meta_req.ok:
+        print(meta_req.status_code)
+        print(meta_req.text)
+        continue
     meta = meta_req.json()
 
     if 'aliyun' not in meta:
+        print(f"{b} has no Aliyun artifacts")
+        modified_builds[b] = True
         continue
 
     buildid = meta['buildid']
@@ -67,9 +85,11 @@ for b in builds_list:
                 print(f"FAIL: Failed to modify {image} in {region}")
                 continue
 
+    modified_builds[b] = True
     print(f"Finished modifying {buildid}")
+
+with open("modified_builds.json", 'w') as f:
+    json.dump(modified_builds, f)
 
 if failed_image_region:
     print(failed_image_region.items())
-
-
