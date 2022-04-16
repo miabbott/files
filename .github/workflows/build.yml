@@ -1,7 +1,7 @@
 name: Build
 
 env:
-  QUAY_BASE: quay.io/miabbott/
+  QUAY_BASE: quay.io/miabbott
 
 on:
   push:
