@@ -57,53 +57,31 @@ function rhcos()
    echo "${us_east_1}"
 }
 
-## coreos-assembler
-# Old function
-#function coreos-assembler() {
-#    env | grep COREOS_ASSEMBLER
-#    set -x # so we can see what command gets run
-#    sudo chrt --idle 0 podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name coreos-assembler --net=host \
-#              --tmpfs /tmp -v /var/tmp:/var/tmp \
-#               ${COREOS_ASSEMBLER_PRIVILEGED:+--privileged}                                          \
-#               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
-#               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
-#               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
-#               ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
-#    rc=$?; set +x; return $rc
-#}
 function coreos-assembler() {
    env | grep COREOS_ASSEMBLER
    set -x # so we can see what command gets run
-   chrt --idle 0 podman run --rm -ti --security-opt label=disable --privileged                      \
+   chrt --idle 0 podman run --pull-always --rm -ti --security-opt label=disable --privileged                      \
               --uidmap=1000:0:1 --uidmap=0:1:1000 --uidmap 1001:1001:64536                          \
-              -v ${PWD}:/srv/ --device /dev/kvm --device /dev/fuse                                  \
+              -v "${PWD}":/srv/ --device /dev/kvm --device /dev/fuse                                \
               --tmpfs /tmp -v /var/tmp:/var/tmp --name coreos-assembler                             \
               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
-              ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
+              ${COREOS_ASSEMBLER_CONTAINER:-registry.ci.openshift.org/coreos/coreos-assembler:latest} $@
    rc=$?; set +x; return $rc
-}
-
-function cosa42() {
-    env | grep COREOS_ASSEMBLER
-    set -x # so we can see what command gets run
-    sudo podman run --rm -ti -v ${PWD}:/srv/ --userns=host --device /dev/kvm --name cosa \
-               ${COREOS_ASSEMBLER_PRIVILEGED:+--privileged}                                          \
-               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
-               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
-               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
-               ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:rhcos-4.2} $@
-    rc=$?; set +x; return $rc
 }
 
 
 # butane
 function butane() {
-    podman run --rm --tty --interactive \
-        --security-opt label=disable        \
-        --volume ${PWD}:/pwd --workdir /pwd \
-        quay.io/coreos/butane:release $@
+    if ! $(rpm -q butane) && [[ "$__in_dockerenv" == no ]]; then
+        podman run --rm --tty --interactive \
+            --security-opt label=disable        \
+            --volume "${PWD}":/pwd --workdir /pwd \
+            quay.io/coreos/butane:release "$@"
+    else
+        /usr/bin/butane "$@"
+    fi
 }
 
 
@@ -123,25 +101,6 @@ function cosa_prep_dir()
     sudo setfacl -d -m u:1000:rwx "${workdir}"
     sudo chcon system_u:object_r:container_file_t:s0 "${workdir}"
     pushd "${workdir}"
-    set +x
-}
-
-# pet container
-function MyPrecious()
-{
-    if [ -z "$1" ]; then
-        echo "Need to specify release version"
-        return 1
-    fi
-    set -x
-    sudo chrt --idle 0 podman run --net=host --rm -it --privileged \
-                                  -v $KRB5CCNAME:$KRB5CCNAME:z \
-                                  -v /var/srv:/var/srv \
-                                  -v /var/cache/dnf:/var/cache/dnf \
-                                  -v $HOME:/home/miabbott \
-                                  -v /etc/localtime:/etc/localtime \
-                                  --device /dev/kvm \
-                                  docker-registry.upshift.redhat.com/miabbott/myprecious:$1
     set +x
 }
 
@@ -184,9 +143,6 @@ fi
 if [[ "$__in_dockerenv" == yes ]]; then
     export PS1="[\[\033[01;32m\]\u@\h \[$txtred\](container) \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 fi
-
-# add jlebon files to PATH
-#export PATH="$PATH:/home/miabbott/workspaces/jlebon/files/bin"
 
 # Configure Go
 export GOPATH=~/workspaces/go
@@ -235,26 +191,11 @@ alias aht="pushd ~/workspaces/projectatomic/atomic-host-tests/"
 alias acj="pushd ~/workspaces/atomic-ci-jobs/"
 alias installer="pushd ~/workspaces/go/src/github.com/openshift/installer"
 
-# Run htop in a container
-alias htop="sudo chrt --idle 0 podman run -it --rm --pid=host quay.io/miabbott/htop"
-
-# Run glances in a container
-alias glances="sudo chrt --idle 0 podman run -it --rm --pid=host localhost/miabbott/glances"
-
-# Run bpytop in a container
-alias bpytop="sudo chrt --idle 0 podman run -it --rm --net=host --pid=host localhost/miabbott/bpytop"
-
 # handy for doing local ostree tests
 alias ost="ostree --repo=repo"
 
-# provide alias for jq when not in container
-#if [[ "$__in_dockerenv" != yes ]]; then
-#    alias jq="chrt --idle 0 podman run --rm -i quay.io/miabbott/jq"
-#fi
-
-# pet container
-alias myprecious=MyPrecious
-
+# cosa == coreos-assembler
+alias cosa=coreos-assembler
 
 ### ERRATA ###
 
