@@ -60,7 +60,7 @@ function rhcos()
 function coreos-assembler() {
    env | grep COREOS_ASSEMBLER
    set -x # so we can see what command gets run
-   chrt --idle 0 podman run --pull-always --rm -ti --security-opt label=disable --privileged                      \
+   chrt --idle 0 podman run --rm -ti --security-opt label=disable --privileged                      \
               --uidmap=1000:0:1 --uidmap=0:1:1000 --uidmap 1001:1001:64536                          \
               -v "${PWD}":/srv/ --device /dev/kvm --device /dev/fuse                                \
               --tmpfs /tmp -v /var/tmp:/var/tmp --name coreos-assembler                             \
@@ -119,7 +119,7 @@ LAST_HISTORY_WRITE=$SECONDS
 PROMPT_COMMAND="$PROMPT_COMMAND; prompt_command"
 
 # setup for rcm_messages
-export KRB5CCNAME=/tmp/krb5cc_miabbott
+#export KRB5CCNAME=/tmp/krb5cc_miabbott
 
 # Define default LIBVIRT connection
 export LIBVIRT_DEFAULT_URI=qemu:///system
@@ -145,8 +145,12 @@ if [[ "$__in_dockerenv" == yes ]]; then
 fi
 
 # Configure Go
-export GOPATH=~/workspaces/go
-export PATH="$PATH:$GOPATH/bin"
+#export GOPATH=~/workspaces/go
+#export PATH="$PATH:$GOPATH/bin"
+
+# Configure PATH for diff-so-fancy
+# https://github.com/so-fancy/diff-so-fancy
+export PATH="$PATH:/var/home/miabbott/workspaces/diff-so-fancy"
 
 # OpenShift installer
 export AWS_PROFILE=openshift-dev
@@ -196,6 +200,12 @@ alias ost="ostree --repo=repo"
 
 # cosa == coreos-assembler
 alias cosa=coreos-assembler
+
+# Run bpytop in a container
+alias bpytop="chrt --idle 0 podman run -it --rm --net=host --pid=host quay.io/miabbott/bpytop"
+
+# use reflink=auto always
+alias cp="cp --reflink=auto"
 
 ### ERRATA ###
 
