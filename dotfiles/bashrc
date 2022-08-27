@@ -67,20 +67,22 @@ function coreos-assembler() {
               ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
               ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
               ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
-              ${COREOS_ASSEMBLER_CONTAINER:-registry.ci.openshift.org/coreos/coreos-assembler:latest} $@
+              ${COREOS_ASSEMBLER_CONTAINER:-quay.io/coreos-assembler/coreos-assembler:latest} $@
    rc=$?; set +x; return $rc
 }
 
 
 # butane
 function butane() {
-    if ! $(rpm -q butane) && [[ "$__in_dockerenv" == no ]]; then
+    if [[ "$__in_dockerenv" == no ]]; then
         podman run --rm --tty --interactive \
             --security-opt label=disable        \
             --volume "${PWD}":/pwd --workdir /pwd \
             quay.io/coreos/butane:release "$@"
-    else
+    elif $(rpm -q --quiet butane); then
         /usr/bin/butane "$@"
+    else
+        echo "butane is not installed"
     fi
 }
 
@@ -115,8 +117,8 @@ HISTTIMEFORMAT="%Y-%b-%d %T "
 # https://www.happyassassin.net/2015/01/16/bash-history-with-multiple-sessions/
 HISTSIZE=1048576
 HISTFILESIZE=1048576
-LAST_HISTORY_WRITE=$SECONDS
-PROMPT_COMMAND="$PROMPT_COMMAND; prompt_command"
+LAST_HISTORY_WRITE="$SECONDS"
+PROMPT_COMMAND="$PROMPT_COMMAND"; prompt_command
 
 # setup for rcm_messages
 #export KRB5CCNAME=/tmp/krb5cc_miabbott
@@ -218,7 +220,9 @@ alias cp="cp --reflink=auto"
 source ~/git-completion.bash
 
 # Default to CI-RHOS Testing tenant
-source ~/rhos-testing.sh
+if [ -f '~/rhos-testing.sh' ]; then
+    source ~/rhos-testing.sh
+fi
 
 # unset USER/USERNAME to work with keystoneclient (but why?!?!?!)
 #unset USER
