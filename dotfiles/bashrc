@@ -74,7 +74,7 @@ function coreos-assembler() {
 
 # butane
 function butane() {
-    if [[ "$__in_dockerenv" == no ]]; then
+    if ! $(rpm -q --quiet butane) && [[ "$__in_dockerenv" == no ]]; then
         podman run --rm --tty --interactive \
             --security-opt label=disable        \
             --volume "${PWD}":/pwd --workdir /pwd \
@@ -202,9 +202,6 @@ alias ost="ostree --repo=repo"
 
 # cosa == coreos-assembler
 alias cosa=coreos-assembler
-
-# Run bpytop in a container
-alias bpytop="chrt --idle 0 podman run -it --rm --net=host --pid=host quay.io/miabbott/bpytop"
 
 # use reflink=auto always
 alias cp="cp --reflink=auto"
