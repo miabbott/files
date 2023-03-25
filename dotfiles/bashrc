@@ -140,8 +140,10 @@ export LIBVIRT_DEFAULT_URI=qemu:///system
 
 # display git branch in prompt
 # https://github.com/jimeh/git-aware-prompt
-export GITAWAREPROMPT=~/.bash/git-aware-prompt
-source "${GITAWAREPROMPT}/main.sh"
+if [ -d ~/.bash/git-aware-prompt ]; then
+    export GITAWAREPROMPT=~/.bash/git-aware-prompt
+    source "${GITAWAREPROMPT}/main.sh"
+fi
 
 # colorize prompt, drop user@hostname portion because this is for my local account
 export PS1="[\[\033[01;32m\]\u@\h \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
@@ -229,7 +231,9 @@ alias cp="cp --reflink=auto"
 
 # Git tab completion
 # https://github.com/git/git/blob/master/contrib/completion/git-completion.bash
-source ~/git-completion.bash
+if [ -f ~/git-completion.bash ]; then
+    source ~/git-completion.bash
+fi
 
 # Default to CI-RHOS Testing tenant
 if [ -f '~/rhos-testing.sh' ]; then
