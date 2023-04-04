@@ -217,9 +217,6 @@ alias installer="pushd ~/workspaces/go/src/github.com/openshift/installer"
 # handy for doing local ostree tests
 alias ost="ostree --repo=repo"
 
-# cosa == coreos-assembler
-alias cosa=coreos-assembler
-
 # use reflink=auto always
 alias cp="cp --reflink=auto"
 
