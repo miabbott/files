@@ -257,4 +257,5 @@ if [ -f '/var/home/miabbott/google-cloud-sdk/path.bash.inc' ]; then . '/var/home
 # The next line enables shell command completion for gcloud.
 if [ -f '/var/home/miabbott/google-cloud-sdk/completion.bash.inc' ]; then . '/var/home/miabbott/google-cloud-sdk/completion.bash.inc'; fi
 
-. "$HOME/.asdf/asdf.sh"
+# asdf helper
+if [ -f "${HOME}/.asdf/asdf.sh" ]; then . "${HOME}/.asdf/asdf.sh"; fi
