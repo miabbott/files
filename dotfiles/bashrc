@@ -15,108 +15,17 @@ function prompt_command {
     fi
 }
 
-# Unset all the OpenStack vars
-# https://stackoverflow.com/a/5976494/6257168
-function UnsetOpenStack()
-{
-    for i in $(echo "${!OS_*}"); do
-        unset $i
-    done
+# from extensions.fcos.fr
+install_sysext() {
+  SYSEXT="${1}"
+  URL="https://extensions.fcos.fr/extensions"
+  sudo install -d -m 0755 -o 0 -g 0 /etc/sysupdate.${SYSEXT}.d
+  sudo restorecon -RFv /etc/sysupdate.${SYSEXT}.d
+  curl --silent --fail --location "${URL}/${SYSEXT}.conf" \
+    | sudo tee "/etc/sysupdate.${SYSEXT}.d/${SYSEXT}.conf"
+  sudo /usr/lib/systemd/systemd-sysupdate update --component "${SYSEXT}"
 }
 
-# Retrieve the IP address for a VM
-function GetVmIp()
-{
-    MAC=`sudo virsh dumpxml $1 | grep 'mac address' | awk -F\' '{print $2}'`
-    ip neigh | grep $MAC | awk '{print $1}'
-}
-
-# undefine a VM and remove the qcow2
-function RemoveVm()
-{
-    if [ -z "$1" ]; then
-        printf "Please provide a VM name\n"
-    else
-        STATE=$(virsh dominfo $1 | grep State | awk '{print $2}')
-        if [ "$STATE" = "running" ]; then
-            virsh destroy $1
-        fi
-        QCOW=$(virsh dumpxml $1 | grep -m 1 -F .qcow2 | cut -d "'" -f2)
-        sudo rm $QCOW
-        virsh undefine $1
-    fi
-}
-
-# Get latest RHCOS AMI
-function rhcos()
-{
-   local latest_build
-   latest_build=$(curl -L -s https://releases-redhat-coreos.cloud.paas.upshift.redhat.com/storage/releases/maipo/builds.json | podman run --rm -i docker.io/miabbott/aht-tools jq -r .builds[0])
-   local us_east_1
-   us_east_1=$(curl -L -s https://releases-redhat-coreos.cloud.paas.upshift.redhat.com/storage/releases/maipo/$latest_build/meta.json | podman run --rm -i docker.io/miabbott/aht-tools jq -r .amis[0].hvm)
-   echo "${us_east_1}"
-}
-
-function cosa() {
-   env | grep COREOS_ASSEMBLER
-   local -r COREOS_ASSEMBLER_CONTAINER_LATEST="quay.io/coreos-assembler/coreos-assembler:latest"
-   if [[ -z ${COREOS_ASSEMBLER_CONTAINER} ]] && $(podman image exists ${COREOS_ASSEMBLER_CONTAINER_LATEST}); then
-       local -r cosa_build_date_str="$(podman inspect -f "{{.Created}}" ${COREOS_ASSEMBLER_CONTAINER_LATEST} | awk '{print $1}')"
-       local -r cosa_build_date="$(date -d ${cosa_build_date_str} +%s)"
-       if [[ $(date +%s) -ge $((cosa_build_date + 60*60*24*7)) ]] ; then
-         echo -e "\e[0;33m----" >&2
-         echo "The COSA container image is more that a week old and likely outdated." >&2
-         echo "You should pull the latest version with:" >&2
-         echo "podman pull ${COREOS_ASSEMBLER_CONTAINER_LATEST}" >&2
-         echo -e "----\e[0m" >&2
-         sleep 10
-       fi
-   fi
-   set -x
-   podman run --rm -ti --security-opt label=disable --privileged                                    \
-              --uidmap=1000:0:1 --uidmap=0:1:1000 --uidmap 1001:1001:64536                          \
-              -v ${PWD}:/srv/ --device /dev/kvm --device /dev/fuse                                  \
-              --tmpfs /tmp -v /var/tmp:/var/tmp --name cosa                                         \
-              ${COREOS_ASSEMBLER_CONFIG_GIT:+-v $COREOS_ASSEMBLER_CONFIG_GIT:/srv/src/config/:ro}   \
-              ${COREOS_ASSEMBLER_GIT:+-v $COREOS_ASSEMBLER_GIT/src/:/usr/lib/coreos-assembler/:ro}  \
-              ${COREOS_ASSEMBLER_CONTAINER_RUNTIME_ARGS}                                            \
-              ${COREOS_ASSEMBLER_CONTAINER:-$COREOS_ASSEMBLER_CONTAINER_LATEST} "$@"
-   rc=$?; set +x; return $rc
-}
-
-# butane
-function butane() {
-    if ! $(rpm -q --quiet butane) && [[ "$__in_dockerenv" == no ]]; then
-        podman run --rm --tty --interactive \
-            --security-opt label=disable        \
-            --volume "${PWD}":/pwd --workdir /pwd \
-            quay.io/coreos/butane:release "$@"
-    elif $(rpm -q --quiet butane); then
-        /usr/bin/butane "$@"
-    else
-        echo "butane is not installed"
-    fi
-}
-
-
-# prep a dir for building with cosa
-function cosa_prep_dir()
-{
-    if [ -z "$1" ]; then
-        echo "Need to specify directory"
-        return 1
-    fi
-
-    set -x
-    local workdir
-    workdir=$1
-    sudo mkdir -p "${workdir}"
-    sudo setfacl -m u:1000:rwx  "${workdir}"
-    sudo setfacl -d -m u:1000:rwx "${workdir}"
-    sudo chcon system_u:object_r:container_file_t:s0 "${workdir}"
-    pushd "${workdir}"
-    set +x
-}
 
 ## export functions currently used
 export -f prompt_command
@@ -131,9 +40,6 @@ HISTSIZE=1048576
 HISTFILESIZE=1048576
 LAST_HISTORY_WRITE="$SECONDS"
 PROMPT_COMMAND="$PROMPT_COMMAND"; prompt_command
-
-# setup for rcm_messages
-#export KRB5CCNAME=/tmp/krb5cc_miabbott
 
 # Define default LIBVIRT connection
 export LIBVIRT_DEFAULT_URI=qemu:///system
@@ -160,14 +66,6 @@ if [[ "$__in_dockerenv" == yes ]]; then
     export PS1="[\[\033[01;32m\]\u@\h \[$txtred\](container) \[\033[01;34m\]\w\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]]\$ "
 fi
 
-# Configure Go
-#export GOPATH=~/workspaces/go
-#export PATH="$PATH:$GOPATH/bin"
-
-# Configure PATH for diff-so-fancy
-# https://github.com/so-fancy/diff-so-fancy
-#export PATH="$PATH:/var/home/miabbott/workspaces/diff-so-fancy"
-
 # for bpytop?
 export PATH="$PATH:/var/home/miabbott/.local/bin/"
 
@@ -185,37 +83,11 @@ alias sshq="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 alias scpq="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 alias sshk="ssh -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
-alias unset-openstack=UnsetOpenStack
-
-# Choose Openstack instance/tenant
-alias rhos="UnsetOpenStack; source ~/rhos.sh"
-alias rhos-testing="UnsetOpenStack; source ~/rhos-testing.sh"
-
-# Flush ARP cache
-alias flush-arp="ip -s -s neigh flush all"
-
 # Use 'sudo' with aliases
 # http://askubuntu.com/a/22043
 # This broke in F33
 # https://unix.stackexchange.com/questions/627998/how-to-resolve-vi-internal-vim-alias-command-not-found
 #alias sudo="sudo "
-
-# Retrieve IP of libvirt VM
-alias get-vm-ip=GetVmIp
-
-# Destroy and remove libvirt VM + image
-alias remove-vm=RemoveVm
-
-# get ip from vagrant box
-alias vagrantip="vagrant ssh -c \"ip address show eth0 | grep 'inet ' | sed -e 's/^.*inet //' -e 's/\/.*$//'\""
-
-# aliases for frequently used dirs
-alias aht="pushd ~/workspaces/projectatomic/atomic-host-tests/"
-alias acj="pushd ~/workspaces/atomic-ci-jobs/"
-alias installer="pushd ~/workspaces/go/src/github.com/openshift/installer"
-
-# handy for doing local ostree tests
-alias ost="ostree --repo=repo"
 
 # use reflink=auto always
 alias cp="cp --reflink=auto"
@@ -232,30 +104,31 @@ if [ -f ~/git-completion.bash ]; then
     source ~/git-completion.bash
 fi
 
-# Default to CI-RHOS Testing tenant
-if [ -f '~/rhos-testing.sh' ]; then
-    source ~/rhos-testing.sh
-fi
-
-# unset USER/USERNAME to work with keystoneclient (but why?!?!?!)
-#unset USER
-#unset USERNAME
-
-# Putting this here because I don't have an Ansible playbook to setup my workstation
-#$ sudo cat /etc/polkit-1/rules.d/80-libvirt-manage.rules
-#// https://goldmann.pl/blog/2012/12/03/configuring-polkit-in-fedora-18-to-access-virt-manager/
-#polkit.addRule(function(action, subject) {
-#  if (action.id == "org.libvirt.unix.manage" && subject.local && subject.active && subject.isInGroup("wheel")) {
-#      return polkit.Result.YES;
-#  }
-#});
-#
-
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/var/home/miabbott/google-cloud-sdk/path.bash.inc' ]; then . '/var/home/miabbott/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/var/home/miabbott/google-cloud-sdk/completion.bash.inc' ]; then . '/var/home/miabbott/google-cloud-sdk/completion.bash.inc'; fi
 
-# asdf helper
-if [ -f "${HOME}/.asdf/asdf.sh" ]; then . "${HOME}/.asdf/asdf.sh"; fi
+# Claude
+export CLAUDE_CODE_USE_VERTEX=1
+export CLOUD_ML_REGION=us-east5
+export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-core-pe-eng-claude
+
+export PATH=$PATH:$HOME/.npm-global/bin
+### bling.sh source start
+test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
+### bling.sh source end
+
+# ls -latr replacement function with eza
+function ls() {
+    if [ "$#" -eq 1 ] && [ "$1" = "-latr" ] && command -v eza >/dev/null; then
+        command eza -la --sort=old --reverse
+    elif command -v eza >/dev/null; then
+        command eza "$@"
+    else
+        command ls "$@"
+    fi
+}
+
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$PATH
