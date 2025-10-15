@@ -120,10 +120,17 @@ export PATH=$PATH:$HOME/.npm-global/bin
 test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
 ### bling.sh source end
 
+# remove the ls alias
+if alias | grep ls > /dev/null; then
+    unalias ls
+fi
+
 # ls -latr replacement function with eza
 function ls() {
-    if [ "$#" -eq 1 ] && [ "$1" = "-latr" ] && command -v eza >/dev/null; then
-        command eza -la --sort=old --reverse
+    if [ "$#" -ge 1 ] && [ "$1" = "-latr" ] && command -v eza >/dev/null; then
+        # drop the passed flags
+        shift
+        eza -la --sort=old --reverse "$@"
     elif command -v eza >/dev/null; then
         command eza "$@"
     else
@@ -132,3 +139,5 @@ function ls() {
 }
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$PATH
+
+. "$HOME/.local/bin/env"
