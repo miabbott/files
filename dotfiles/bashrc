@@ -145,4 +145,8 @@ fi
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$PATH
 
+if [ -d ~/workspaces/github.com/miabbott/files/bin ]; then
+    export PATH=~/workspaces/github.com/miabbott/files/bin:$PATH
+fi
+
 . "$HOME/.local/bin/env"
