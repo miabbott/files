@@ -138,6 +138,11 @@ function ls() {
     fi
 }
 
+# fix the use of podman inside the toolbox container
+if [ -f /usr/local/bin/podman ] && [ -f /usr/local/bin/host-runner ]; then
+    unalias podman
+fi
+
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$PATH
 
 . "$HOME/.local/bin/env"
