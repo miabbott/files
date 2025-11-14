@@ -121,7 +121,7 @@ test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/b
 ### bling.sh source end
 
 # remove the ls alias
-if alias | grep ls > /dev/null; then
+if alias | grep "alias ls" > /dev/null; then
     unalias ls
 fi
 
@@ -149,4 +149,6 @@ if [ -d ~/workspaces/github.com/miabbott/files/bin ]; then
     export PATH=~/workspaces/github.com/miabbott/files/bin:$PATH
 fi
 
+if [ -f "$HOME/.local/bin/env" ]; then
 . "$HOME/.local/bin/env"
+fi
