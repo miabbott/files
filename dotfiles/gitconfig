@@ -16,11 +16,26 @@
     lg = "log --color --stat --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
     hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
     alias = config --get-regexp ^alias\\.
-    pr = "!f() { git fetch $1 refs/pull/$2/head:pr/$1/$2 && git checkout pr/$1/$2; } ; f"
     upr = "!f() { git pull $1 pull/$2/head; } ; f"
     mr = "!f() { git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2; } ; f"
     umr = "!f() { git pull $1 merge-requests/$2/head; } ; f"
     dt = difftool
+    pr = "!f() { \
+        if [ -z \"$1\" ]; then echo 'Usage: git pr-checkout <PR-number>'; return 1; fi; \
+        if ! git remote get-url upstream >/dev/null 2>&1; then echo 'Remote \"upstream\" not found'; return 1; fi; \
+        pr_branch=pr/upstream/$1; \
+        current_branch=$(git rev-parse --abbrev-ref HEAD); \
+        if [ \"$current_branch\" = \"$pr_branch\" ]; then \
+            echo \"You're on $pr_branch — switching to main (or previous branch) to allow update...\"; \
+            git show-ref --verify --quiet refs/heads/main && git checkout main || git checkout -; \
+        fi; \
+        echo \"Fetching PR #$1 from upstream into $pr_branch...\"; \
+        git fetch upstream refs/pull/$1/head:$pr_branch --force && \
+        git checkout $pr_branch && \
+        echo \"✅ Checked out updated $pr_branch\"; \
+    }; f"
+	smart-clone = !git-smart-clone.sh
+
 [sendemail]
     from = Micah Abbott <miabbott@redhat.com>
     smtpserver = smtp.corp.redhat.com
@@ -33,3 +48,38 @@
 	extendRegexp = true
 [gpg]
 	program = gpg2
+[pull]
+	rebase = false
+[submodule]
+    recurse = true
+[merge]
+    renamelimit = 12000
+
+#[url "git@github.com:"]
+#    insteadOf = https://github.com/
+
+[includeIf "gitdir:/var/home/miabbott/workspaces/redhat/*"]
+    path = /var/home/miabbott/workspaces/redhat/.gitconfig_redhat
+[init]
+	defaultBranch = main
+	templateDir = /var/home/miabbott/.git-template
+[rh-pre-commit]
+	checkSecrets = true
+	enableLocalConfig = false
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[format]
+	signOff = true
+[http]
+	followRedirects = true
+[rh-pre-commit "commit-msg"]
+	signOff = true
