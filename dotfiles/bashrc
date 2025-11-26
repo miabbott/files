@@ -111,11 +111,19 @@ if [ -f '/var/home/miabbott/google-cloud-sdk/path.bash.inc' ]; then . '/var/home
 if [ -f '/var/home/miabbott/google-cloud-sdk/completion.bash.inc' ]; then . '/var/home/miabbott/google-cloud-sdk/completion.bash.inc'; fi
 
 # Claude
-export CLAUDE_CODE_USE_VERTEX=1
-export CLOUD_ML_REGION=us-east5
-export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-core-pe-eng-claude
+case "$(hostname)" in
+    meatwad)
+        export CLAUDE_CODE_USE_VERTEX=1
+	export CLOUD_ML_REGION=us-east5
+	export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-core-pe-eng-claude
+	export PATH=$PATH:$HOME/.npm-global/bin
+	;;
+    *)
+	unset CLAUDE_CODE_USE_VERTEX
+	unset CLOUD_ML_REGION
+	unset ANTHROPIC_VERTEX_PROJECT_ID
+esac
 
-export PATH=$PATH:$HOME/.npm-global/bin
 ### bling.sh source start
 test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
 ### bling.sh source end
