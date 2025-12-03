@@ -110,10 +110,18 @@ Follow the guidelines from https://cbea.ms/git-commit/ with additional requireme
 - Reserve bulleted lists for exceptional cases where a list format truly improves clarity over prose
 
 #### Attribution Format
-All commits created by Claude Code must include the following git trailer:
+All commits created by Claude Code must include the following git trailer format:
 ```
-Assisted-by: Claude Code 2.0.47 (Sonnet 4.5)
+Assisted-by: Claude Code (MODEL_NAME)
 ```
+
+Where MODEL_NAME indicates the AI model being used. Examples:
+- `Assisted-by: Claude Code (Sonnet 4.5)`
+- `Assisted-by: Claude Code (Sonnet 3.5)`
+- `Assisted-by: Claude Code (Opus)`
+
+The model name is the most important part of the attribution as it captures
+which AI model assisted with the commit.
 
 #### Complete Commit Message Template
 
@@ -138,7 +146,7 @@ Reserve bulleted lists for exceptional cases where a list format truly
 improves clarity over prose. Keep the language professional and
 factual, avoiding overly expressive or emotional phrasing.
 
-Assisted-by: Claude Code 2.0.47 (Sonnet 4.5)
+Assisted-by: Claude Code (Sonnet 4.5)
 Signed-off-by: Your Name <your.email@example.com>
 ```
 
