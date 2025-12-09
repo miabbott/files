@@ -124,7 +124,7 @@ case "$(hostname)" in
         unset ANTHROPIC_VERTEX_PROJECT_ID
 esac
 
-if [ -d ~/.npm-global ]; then
+if [ -d ~/.npm-global ] && command -v npm > /dev/null; then
     npm config set prefix '~/.npm-global'
     export PATH=$PATH:$HOME/.nmp-global/bin
 fi
