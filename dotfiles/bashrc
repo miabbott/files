@@ -116,18 +116,12 @@ case "$(hostname)" in
         export CLAUDE_CODE_USE_VERTEX=1
         export CLOUD_ML_REGION=us-east5
         export ANTHROPIC_VERTEX_PROJECT_ID=itpc-gcp-core-pe-eng-claude
-        export PATH=$PATH:$HOME/.npm-global/bin
         ;;
     *)
         unset CLAUDE_CODE_USE_VERTEX
         unset CLOUD_ML_REGION
         unset ANTHROPIC_VERTEX_PROJECT_ID
 esac
-
-if [ -d ~/.npm-global ] && command -v npm > /dev/null; then
-    npm config set prefix '~/.npm-global'
-    export PATH=$PATH:$HOME/.nmp-global/bin
-fi
 
 ### bling.sh source start
 test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
