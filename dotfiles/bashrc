@@ -30,6 +30,14 @@ install_sysext() {
 ## export functions currently used
 export -f prompt_command
 
+# PATH helper functions - prevent duplicate entries
+path_prepend() {
+    [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:$PATH"
+}
+path_append() {
+    [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$PATH:$1"
+}
+
 ### ENV VARS ###
 
 # Configuring command history
@@ -67,7 +75,7 @@ if [[ "$__in_dockerenv" == yes ]]; then
 fi
 
 # for bpytop?
-export PATH="$PATH:/var/home/miabbott/.local/bin/"
+path_append "$HOME/.local/bin"
 
 # OpenShift installer
 export AWS_PROFILE=openshift-dev
@@ -150,10 +158,13 @@ if [ -f /usr/local/bin/podman ] && [ -f /usr/local/bin/host-runner ]; then
     unalias podman
 fi
 
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:$PATH
+path_prepend /sbin
+path_prepend /usr/sbin
+path_prepend /bin
+path_prepend /usr/bin
 
 if [ -d ~/workspaces/github.com/miabbott/files/bin ]; then
-    export PATH=~/workspaces/github.com/miabbott/files/bin:$PATH
+    path_prepend "$HOME/workspaces/github.com/miabbott/files/bin"
 fi
 
 if [ -f "$HOME/.local/bin/env" ]; then
