@@ -170,3 +170,8 @@ fi
 if [ -f "$HOME/.local/bin/env" ]; then
 . "$HOME/.local/bin/env"
 fi
+
+# opencode
+if [ -d ~/.opencode/bin ]; then
+    path_prepend ~/.opencode/bin
+fi
