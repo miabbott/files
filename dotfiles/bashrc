@@ -154,7 +154,7 @@ function ls() {
 }
 
 # fix the use of podman inside the toolbox container
-if [ -f /usr/local/bin/podman ] && [ -f /usr/local/bin/host-runner ]; then
+if [ -f /usr/local/bin/podman ] && [ -f /usr/local/bin/host-runner ] && [ -f /usr/bin/podman-remote ]; then
     unalias podman
 fi
 
